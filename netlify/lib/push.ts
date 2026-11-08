@@ -1,6 +1,6 @@
 /** Shared by the push functions: storage, VAPID setup and sending. */
 import { getStore } from "@netlify/blobs";
-import webpush from "web-push";
+import { sendNotification } from "web-push";
 import type { PushRegistration } from "../../packages/shared/src/index";
 import type { ReminderMessage } from "../../packages/review/src/index";
 
@@ -34,7 +34,7 @@ export async function send(reg: PushRegistration, msg: ReminderMessage): Promise
   const keys = vapid();
   if (!keys) return "failed";
   try {
-    await webpush.sendNotification(reg.subscription, JSON.stringify(msg), {
+    await sendNotification(reg.subscription, JSON.stringify(msg), {
       TTL: 6 * 60 * 60,
       urgency: "normal",
       vapidDetails: { subject: keys.subject, publicKey: keys.publicKey, privateKey: keys.privateKey },
