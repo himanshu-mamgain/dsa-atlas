@@ -755,3 +755,14 @@ code {
     justify-self: start;
   }
 }
+
+.inline-label {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+
+.inline-label select {
+  width: auto;
+}

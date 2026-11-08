@@ -2,6 +2,13 @@
   command = "npm run build -w @dsa-atlas/web"
   publish = "apps/web/dist"
 
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "apps/web/netlify/functions"
+  node_bundler = "esbuild"
+
 [[headers]]
   for = "/sw.js"
   [headers.values]
