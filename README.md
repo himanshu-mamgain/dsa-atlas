@@ -13,6 +13,7 @@ Installable PWA (Android, iOS, desktop) that works offline. Notes stay on your d
 - **Complexity graph** of every approach, with optional reference curves
 - **Spaced repetition**: problems come back after 1 → 3 → 7 → 14 → 30 → 60 days; streak and topic progress on the home screen
 - **Backup**: JSON export/import
+- **Push reminders** (phase 2): a daily notification at your chosen time when problems are due. Only titles and due dates go to the server.
 
 ## Getting started
 
@@ -35,6 +36,7 @@ npm workspaces, TypeScript, React 19, Vite 8, Motion, Recharts, Dexie (IndexedDB
 | `packages/shared` | Data types shared by the app and (later) the push functions |
 | `packages/review` | Spaced-repetition logic, shared by the app and the reminder function |
 | `packages/complexity` | Big-O parsing and curve sampling for the graph |
+| `apps/web/netlify/functions` | `push` (`/api/push`: subscribe, unsubscribe, test) and `daily-reminders` (hourly schedule) |
 
 ## Scripts
 
@@ -49,10 +51,20 @@ npm workspaces, TypeScript, React 19, Vite 8, Motion, Recharts, Dexie (IndexedDB
 ## Roadmap
 
 1. ✅ Problems, approaches, Monaco, offline PWA, complexity graph, compare, spaced repetition
-2. Netlify push reminders (scheduled function + Web Push + Netlify Blobs)
+2. ✅ Netlify push reminders (scheduled function + Web Push + Netlify Blobs)
 3. Run code in the browser (JS worker, Python via Pyodide) and plot measured runtimes
 4. Chrome extension to capture problems from LeetCode/GFG
 
 ## Deployment
+
+Push reminders need three environment variables on Netlify (Site configuration → Environment variables, scope: Functions), then a redeploy:
+
+| Variable | Value |
+| --- | --- |
+| `VAPID_PUBLIC_KEY` | from `npx web-push generate-vapid-keys` |
+| `VAPID_PRIVATE_KEY` | from the same command; keep it secret, never commit it |
+| `VAPID_SUBJECT` | `mailto:` plus your email |
+
+Subscriptions are stored in Netlify Blobs (store `push-subscriptions`).
 
 Netlify builds with `netlify.toml` (`npm run build -w @dsa-atlas/web`, publishing `apps/web/dist`).

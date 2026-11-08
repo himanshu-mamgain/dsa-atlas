@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Download, Upload } from "lucide-react";
 import { exportAll, importAll } from "../db/db";
 import { INTERVAL_DAYS } from "@dsa-atlas/review";
+import { Reminders } from "../push/Reminders";
 
 export function Settings() {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -56,10 +57,7 @@ export function Settings() {
         </p>
       </section>
 
-      <section className="card">
-        <h2>Reminders</h2>
-        <p className="muted small">Push reminders for problems due each day are coming next (Netlify push).</p>
-      </section>
+      <Reminders />
     </div>
   );
 }

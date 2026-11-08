@@ -79,6 +79,31 @@ export interface Problem {
   updatedAt: number;
 }
 
+/** What a device sends the push function: only titles and due dates, never notes or code. */
+export interface ReminderItem {
+  id: string;
+  title: string;
+  nextDue: number;
+}
+
+export interface ReminderSettings {
+  /** IANA timezone, e.g. "Asia/Kolkata". */
+  timeZone: string;
+  /** Local hour (0–23) to send the daily reminder. */
+  hour: number;
+}
+
+export interface PushSubscriptionJSONStrict {
+  endpoint: string;
+  expirationTime?: number | null;
+  keys: { p256dh: string; auth: string };
+}
+
+export interface PushRegistration extends ReminderSettings {
+  subscription: PushSubscriptionJSONStrict;
+  items: ReminderItem[];
+}
+
 export const STRUCTURA_URL = "https://structura-web.netlify.app";
 export const structuraTopicUrl = (id: string) => `${STRUCTURA_URL}/?topic=${encodeURIComponent(id)}`;
 
