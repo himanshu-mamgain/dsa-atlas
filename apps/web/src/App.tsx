@@ -1,4 +1,4 @@
-import { BookOpen, Brain, Home as HomeIcon, ListChecks, Settings as SettingsIcon, Target } from "lucide-react";
+import { BookOpen, Brain, Home as HomeIcon, ListChecks, NotebookPen, Settings as SettingsIcon, Target } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { isDue } from "@dsa-atlas/review";
 import { navigate, section, useRoute, type Route } from "./router";
@@ -11,6 +11,7 @@ import { Revise } from "./pages/Revise";
 import { Settings } from "./pages/Settings";
 import { Checklist } from "./pages/Checklist";
 import { GoalPage, Goals } from "./pages/Goals";
+import { NotesPage, NoteView } from "./notes/NotesUI";
 import { Link } from "./components/Link";
 import { QuickSearch } from "./components/QuickSearch";
 import { AppSwitcher } from "./components/AppSwitcher";
@@ -23,6 +24,7 @@ const NAV: NavItem[] = [
   { route: { name: "checklist" }, label: "Checklist", icon: ListChecks, mobile: true },
   { route: { name: "goals" }, label: "Goals", icon: Target, mobile: true },
   { route: { name: "problems" }, label: "Problems", icon: BookOpen, mobile: true },
+  { route: { name: "notes" }, label: "Notion notes", icon: NotebookPen, mobile: false },
   { route: { name: "settings" }, label: "Settings", icon: SettingsIcon, mobile: false },
 ];
 
@@ -94,6 +96,8 @@ export function App() {
         {route.name === "goals" && <Goals />}
         {route.name === "goal" && <GoalPage key={route.id} id={route.id} />}
         {route.name === "problems" && <ProblemList key={route.structura ?? ""} structura={route.structura} />}
+        {route.name === "notes" && <NotesPage />}
+        {route.name === "note" && <NoteView key={route.id} id={route.id} />}
         {route.name === "settings" && <Settings />}
         {route.name === "problem" && (route.edit ? <ProblemEditor key={route.id} id={route.id} /> : <ProblemView key={route.id} id={route.id} />)}
       </main>

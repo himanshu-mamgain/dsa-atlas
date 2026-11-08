@@ -1,3 +1,8 @@
+# DSA Atlas on Netlify: a static PWA plus functions for push reminders (/api/push,
+# daily-reminders) and saving notes to Notion (/api/notion-note).
+# The build copies your Notion DSA notes into the site and refreshes the Master
+# Checklist when NOTION_TOKEN and NOTION_ROOT_PAGE_ID are set (NOTION_PASSPHRASE
+# encrypts the notes). See the README, "Notion notes".
 [build]
   command = "npm run build -w @dsa-atlas/web"
   publish = "apps/web/dist"

@@ -1,12 +1,20 @@
 /// <reference lib="webworker" />
 import { cleanupOutdatedCaches, precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
+import { NetworkFirst } from "workbox-strategies";
 
 declare const self: ServiceWorkerGlobalScope;
 
 precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
-registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html")));
+// /notion/ and /api/ are real files and functions, not app pages.
+registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html"), { denylist: [/^\/notion\//, /^\/api\//] }));
+
+// Notion notes (scripts/notion.ts): fresh when online, the last copy when offline.
+registerRoute(
+  ({ url }) => url.origin === self.location.origin && url.pathname.startsWith("/notion/"),
+  new NetworkFirst({ cacheName: "dsa-atlas-notes", networkTimeoutSeconds: 4 }),
+);
 
 self.addEventListener("message", (event) => {
   if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
