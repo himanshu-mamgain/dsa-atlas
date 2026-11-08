@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion, AnimatePresence } from "motion/react";
-import { Search } from "lucide-react";
+import { ExternalLink, Network, Search, X } from "lucide-react";
+import { ecoLinks } from "@dsa-atlas/shared";
 import { dueLabel, isDue } from "@dsa-atlas/review";
+import { structuraTitle } from "../structura";
 import { db } from "../db/db";
 import { Link } from "../components/Link";
 import { BigO, DifficultyBadge } from "../components/Badges";
 import { NewProblem } from "../components/NewProblem";
 
-export function ProblemList() {
+export function ProblemList({ structura }: { structura?: string }) {
   const problems = useLiveQuery(() => db.problems.orderBy("updatedAt").reverse().toArray(), []);
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState("");
@@ -19,11 +21,36 @@ export function ProblemList() {
   const shown = (problems ?? []).filter((p) => {
     const q = query.toLowerCase();
     const text = [p.title, ...p.topics, ...p.patterns].join(" ").toLowerCase();
-    return (!q || text.includes(q)) && (!topic || p.topics.includes(topic)) && (!dueOnly || isDue(p.review));
+    return (
+      (!structura || p.structuraTopics.includes(structura)) &&
+      (!q || text.includes(q)) &&
+      (!topic || p.topics.includes(topic)) &&
+      (!dueOnly || isDue(p.review))
+    );
   });
 
   return (
     <div className="stack">
+      {structura && (
+        <section className="card eco-banner">
+          <Network size={20} aria-hidden />
+          <div>
+            <p className="small muted">From Structura</p>
+            <h2>Problems related to {structuraTitle(structura)}</h2>
+            {problems && shown.length === 0 && (
+              <p className="small muted">None yet. Open a problem, choose Edit, and add "{structuraTitle(structura)}" under Related Structura topics.</p>
+            )}
+          </div>
+          <div className="eco-banner-actions">
+            <a className="btn" href={ecoLinks.structuraTopic(structura)} target="_blank" rel="noreferrer">
+              <ExternalLink size={16} aria-hidden /> Back to topic
+            </a>
+            <Link to={{ name: "problems" }} className="btn ghost">
+              <X size={16} aria-hidden /> Show all
+            </Link>
+          </div>
+        </section>
+      )}
       <div className="filters">
         <label className="search">
           <Search size={16} aria-hidden />
