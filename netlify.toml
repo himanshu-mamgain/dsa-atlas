@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build -w @dsa-atlas/web"
+  publish = "apps/web/dist"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
