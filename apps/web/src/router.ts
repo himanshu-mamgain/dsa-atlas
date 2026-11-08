@@ -5,6 +5,7 @@ import { useSyncExternalStore } from "react";
  *   ?problem=<id>           read view
  *   ?problem=<id>&edit=1    editor
  *   ?goal=<id>              one company goal
+ *   ?note=<id>              one of your Notion notes
  *   ?page=problems|settings|revise|checklist|goals
  *   ?page=problems&structura=<topic id>   problems linked to a Structura topic
  */
@@ -16,9 +17,11 @@ export type Route =
   | { name: "checklist" }
   | { name: "goals" }
   | { name: "goal"; id: string }
+  | { name: "notes" }
+  | { name: "note"; id: string }
   | { name: "problem"; id: string; edit?: boolean };
 
-const PAGES = ["settings", "revise", "checklist", "goals"] as const;
+const PAGES = ["settings", "revise", "checklist", "goals", "notes"] as const;
 
 function parse(): Route {
   const q = new URLSearchParams(location.search);
@@ -26,6 +29,8 @@ function parse(): Route {
   if (id) return { name: "problem", id, edit: q.get("edit") === "1" };
   const goal = q.get("goal");
   if (goal) return { name: "goal", id: goal };
+  const note = q.get("note");
+  if (note) return { name: "note", id: note };
   const page = q.get("page");
   if (page === "problems") return { name: "problems", structura: q.get("structura") ?? undefined };
   if (PAGES.includes(page as (typeof PAGES)[number])) return { name: page as (typeof PAGES)[number] };
@@ -53,11 +58,12 @@ export const hrefFor = (r: Route) => {
   if (r.name === "problems" && r.structura) return `/?page=problems&structura=${encodeURIComponent(r.structura)}`;
   if (r.name === "problem") return `/?problem=${encodeURIComponent(r.id)}${r.edit ? "&edit=1" : ""}`;
   if (r.name === "goal") return `/?goal=${encodeURIComponent(r.id)}`;
+  if (r.name === "note") return `/?note=${encodeURIComponent(r.id)}`;
   return `/?page=${r.name}`;
 };
 
 /** Which nav item a route belongs to. */
-export const section = (r: Route): Route["name"] => (r.name === "problem" ? "problems" : r.name === "goal" ? "goals" : r.name);
+export const section = (r: Route): Route["name"] => (r.name === "problem" ? "problems" : r.name === "goal" ? "goals" : r.name === "note" ? "notes" : r.name);
 
 export function useRoute(): Route {
   return useSyncExternalStore(

@@ -5,9 +5,11 @@ import { App } from "./App";
 import { registerServiceWorker } from "./pwa";
 import { startReminderSync } from "./push/push";
 import { requestPersistentStorage } from "./storage";
+import { syncChecklist } from "./db/checklist";
 import "./theme";
 import "./styles.css";
 import "./layout.css";
+import "./notes/notes.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -20,3 +22,4 @@ createRoot(document.getElementById("root")!).render(
 registerServiceWorker();
 startReminderSync();
 requestPersistentStorage();
+syncChecklist();

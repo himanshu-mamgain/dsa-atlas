@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/structura-topics.mjs && npm run typecheck && vite build",
+    "build": "node scripts/structura-topics.mjs && tsx scripts/notion-checklist.ts && npm run typecheck && vite build && tsx scripts/notion.ts",
     "structura-topics": "node scripts/structura-topics.mjs",
     "checklist": "node scripts/checklist.mjs",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json",
-    "icons": "pwa-assets-generator"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json && tsc --noEmit -p tsconfig.scripts.json",
+    "icons": "pwa-assets-generator",
+    "notes": "tsx scripts/notion.ts",
+    "notion-checklist": "tsx scripts/notion-checklist.ts"
   },
   "dependencies": {
     "@dsa-atlas/complexity": "*",

@@ -121,6 +121,8 @@ export interface ChecklistState {
   doneAt: number | null;
   /** The DSA Atlas problem made from this item, if any. */
   problemId?: string;
+  /** Ticked or unticked in the app, so Notion's tick no longer applies. */
+  touched?: boolean;
 }
 
 /** A practice target for a company: problems to finish by a date. */
@@ -134,3 +136,5 @@ export interface Goal {
   note: string;
   createdAt: number;
 }
+
+export * from "./notes";

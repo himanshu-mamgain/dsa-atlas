@@ -7,6 +7,7 @@ import { APPROACH_LABELS, type Problem } from "@dsa-atlas/shared";
 import { db } from "../db/db";
 import { hrefFor, navigate } from "../router";
 import { DifficultyBadge } from "./Badges";
+import { searchNotes, useNotes } from "../notes/notes";
 
 interface Doc {
   id: string;
@@ -87,6 +88,9 @@ function Palette({ onClose }: { onClose: () => void }) {
   useEffect(() => input.current?.focus(), []);
   useEffect(() => setActive(0), [q]);
 
+  const notes = useNotes();
+  const noteHits = notes.status === "ready" && q.trim() ? searchNotes(notes.index, q, 5) : [];
+
   const go = (id: string) => {
     onClose();
     navigate(hrefFor({ name: "problem", id }));
@@ -143,7 +147,27 @@ function Palette({ onClose }: { onClose: () => void }) {
               </button>
             </li>
           ))}
-          {q.trim() && results.length === 0 && <li className="palette-label">No matches for "{q}"</li>}
+          {q.trim() && results.length === 0 && noteHits.length === 0 && <li className="palette-label">No matches for "{q}"</li>}
+          {noteHits.length > 0 && <li className="palette-label">Your Notion notes</li>}
+          {noteHits.map((n) => (
+            <li key={n.id} role="option" aria-selected={false}>
+              <button
+                className="palette-item"
+                onClick={() => {
+                  onClose();
+                  navigate(hrefFor({ name: "note", id: n.id }));
+                }}
+              >
+                <span className="row">
+                  <span className="row-title">
+                    {n.icon && !/^https?:/.test(n.icon) ? `${n.icon} ` : ""}
+                    {n.title}
+                  </span>
+                </span>
+                {n.summary && <span className="muted small">{n.summary}</span>}
+              </button>
+            </li>
+          ))}
         </ul>
       </motion.div>
     </motion.div>

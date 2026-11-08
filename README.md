@@ -58,6 +58,25 @@ npm workspaces, TypeScript, React 19, Vite 8, Motion, Recharts, Dexie (IndexedDB
 3. Run code in the browser (JS worker, Python via Pyodide) and plot measured runtimes
 4. Chrome extension to capture problems from LeetCode/GFG
 
+## Notion notes
+
+Same setup as Structura. Each deploy copies your Notion DSA page and its sub-pages into the site (`apps/web/scripts/notion.ts`), encrypted with a passphrase because the site is public. The app shows them under **Notion notes**, in Ctrl+K search, and on matching problems (same title, ignoring anything in brackets, or a Notion link from the checklist). The build also refreshes the Master Checklist from Notion (`scripts/notion-checklist.ts`); ticks there apply to problems you haven't ticked or unticked in the app.
+
+**Save to Notion** on a problem seals the note with the notes key and sends it to `/api/notion-note` (`netlify/functions/notion-note.mts`), which appends it to *<your DSA page> / Notes from DSA Atlas / <problem>*. It shows up in the app after the next deploy.
+
+Netlify environment variables (scope: Builds and Functions):
+
+| Variable | Value |
+| --- | --- |
+| `NOTION_TOKEN` | an internal integration's secret (notion.so/profile/integrations). Share your DSA page with it (••• → Connections). Saving back needs the "Insert content" capability. Structura's integration works too. |
+| `NOTION_ROOT_PAGE_ID` | your "DSA — Data Structures & Algorithms" page (its URL or id) |
+| `NOTION_PASSPHRASE` | encrypts the notes; the app asks for it once per browser |
+| `NOTION_EXCLUDE` | optional: comma-separated titles to leave out |
+| `NOTION_MAX_DEPTH` | optional: levels of sub-pages to include (default 4) |
+| `NOTION_CHECKLIST_PAGE_ID` | optional: the checklist page (defaults to the Master Checklist) |
+
+Without a token both steps are skipped: the app hides notes and keeps the saved checklist. A Notion error never fails the build. Unchanged pages are reused from `node_modules/.cache/dsa-atlas-notion`. Test locally against a mock with `NOTION_API=<url>`. Never commit the token or generated notes.
+
 ## Deployment
 
 Push reminders need three environment variables on Netlify (Site configuration → Environment variables, scope: Functions), then a redeploy:

@@ -45,7 +45,24 @@ export function seedChecklist(): ChecklistState[] {
 
 export async function setDone(id: string, done: boolean) {
   const prev = await db.checklist.get(id);
-  await db.checklist.put({ ...(prev ?? { id }), id, done, doneAt: done ? Date.now() : null });
+  await db.checklist.put({ ...(prev ?? { id }), id, done, doneAt: done ? Date.now() : null, touched: true });
+}
+
+/**
+ * Brings this device in line with the checklist built into the app (refreshed
+ * from Notion at build time): new problems are added, and Notion's ticks apply
+ * to problems you haven't ticked or unticked in the app.
+ */
+export async function syncChecklist() {
+  const states = new Map((await db.checklist.toArray()).map((s) => [s.id, s]));
+  const now = Date.now();
+  const changes: ChecklistState[] = [];
+  for (const item of CHECKLIST_ITEMS) {
+    const s = states.get(item.id);
+    if (!s) changes.push({ id: item.id, done: item.done, doneAt: item.done ? now : null });
+    else if (!s.touched && s.done !== item.done) changes.push({ ...s, done: item.done, doneAt: item.done ? now : null });
+  }
+  if (changes.length) await db.checklist.bulkPut(changes);
 }
 
 const TIER_DIFFICULTY: Record<number, Difficulty> = { 1: "Medium", 2: "Medium", 3: "Hard" };

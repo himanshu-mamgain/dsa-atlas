@@ -10,12 +10,20 @@ import { DifficultyBadge } from "../components/Badges";
 import { ApproachLadder, SolutionViewer } from "../components/SolutionViewer";
 import { ReviewBar } from "../components/ReviewBar";
 import { structuraTitle, structuraTopic } from "../structura";
+import { checklistItem } from "../db/checklist";
+import { ProblemNotes } from "../notes/NotesUI";
 
 const ComplexityGraph = lazy(() => import("../graph/ComplexityGraph"));
 
 /** The default way to open a problem: a clean summary to look things up and revise. */
 export function ProblemView({ id }: { id: string }) {
   const p = useLiveQuery(() => db.problems.get(id), [id], null);
+  // Notion pages of checklist items this problem was made from.
+  const linked = useLiveQuery(
+    async () =>
+      (await db.checklist.filter((s) => s.problemId === id).toArray()).map((s) => checklistItem(s.id)?.notion).filter((u): u is string => Boolean(u)),
+    [id],
+  );
   const [selected, setSelected] = useState<string>("");
   const [reviewed, setReviewed] = useState(false);
 
@@ -86,6 +94,8 @@ export function ProblemView({ id }: { id: string }) {
           <div className="notes-text">{p.notes}</div>
         </section>
       )}
+
+      <ProblemNotes problem={p} linked={linked ?? []} />
 
       <details className="card collapsible">
         <summary>
