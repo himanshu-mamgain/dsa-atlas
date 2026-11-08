@@ -36,7 +36,7 @@ npm workspaces, TypeScript, React 19, Vite 8, Motion, Recharts, Dexie (IndexedDB
 | `packages/shared` | Data types shared by the app and (later) the push functions |
 | `packages/review` | Spaced-repetition logic, shared by the app and the reminder function |
 | `packages/complexity` | Big-O parsing and curve sampling for the graph |
-| `apps/web/netlify/functions` | `push` (`/api/push`: subscribe, unsubscribe, test) and `daily-reminders` (hourly schedule) |
+| `netlify/functions` | `push` (`/api/push`: subscribe, unsubscribe, test) and `daily-reminders` (hourly schedule) |
 
 ## Scripts
 
@@ -63,7 +63,7 @@ Push reminders need three environment variables on Netlify (Site configuration â
 | --- | --- |
 | `VAPID_PUBLIC_KEY` | from `npx web-push generate-vapid-keys` |
 | `VAPID_PRIVATE_KEY` | from the same command; keep it secret, never commit it |
-| `VAPID_SUBJECT` | `mailto:` plus your email |
+| `VAPID_SUBJECT` | optional: `mailto:` plus your email (defaults to a noreply address) |
 
 Subscriptions are stored in Netlify Blobs (store `push-subscriptions`).
 

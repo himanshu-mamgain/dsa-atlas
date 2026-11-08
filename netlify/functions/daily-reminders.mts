@@ -3,7 +3,7 @@
  * hasn't been reminded today, sends "N problems to revise today" if any are due.
  */
 import type { Config } from "@netlify/functions";
-import { dueItems, localDate, reminderMessage, shouldSend } from "@dsa-atlas/review";
+import { dueItems, localDate, reminderMessage, shouldSend } from "../../packages/review/src/index";
 import { send, subscriptions, vapid, type StoredRegistration } from "../lib/push";
 
 export default async () => {

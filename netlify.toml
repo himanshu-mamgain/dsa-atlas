@@ -6,7 +6,7 @@
   NODE_VERSION = "22"
 
 [functions]
-  directory = "apps/web/netlify/functions"
+  directory = "netlify/functions"
   node_bundler = "esbuild"
 
 [[headers]]

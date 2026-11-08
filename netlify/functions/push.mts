@@ -7,8 +7,8 @@
  *   POST   → { endpoint } send a test notification to this device now
  */
 import type { Config } from "@netlify/functions";
-import { validateRegistration } from "@dsa-atlas/review";
-import type { PushRegistration } from "@dsa-atlas/shared";
+import { validateRegistration } from "../../packages/review/src/index";
+import type { PushRegistration } from "../../packages/shared/src/index";
 import { json, keyFor, send, subscriptions, vapid, type StoredRegistration } from "../lib/push";
 
 const MAX_BODY = 100_000;

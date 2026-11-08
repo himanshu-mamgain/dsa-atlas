@@ -9,11 +9,18 @@
   "scripts": {
     "dev": "npm run dev -w @dsa-atlas/web",
     "build": "npm run build -w @dsa-atlas/web",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc --noEmit -p netlify/tsconfig.json",
     "test": "vitest run"
   },
   "devDependencies": {
+    "@netlify/functions": "^6.1.1",
+    "@types/node": "^26.6.6",
+    "@types/web-push": "^3.6.4",
     "typescript": "^7.0.2",
     "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.8",
+    "web-push": "^4.0.0"
   }
 }

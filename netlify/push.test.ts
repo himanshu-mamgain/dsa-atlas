@@ -13,12 +13,11 @@ vi.mock("@netlify/blobs", () => ({
 
 const sent: { endpoint: string; payload: { title: string; body: string; url: string } }[] = [];
 let failWith: number | null = null;
+// Named export only, like the real web-push 4 ESM build (it has no default export).
 vi.mock("web-push", () => ({
-  default: {
-    sendNotification: async (sub: { endpoint: string }, payload: string) => {
-      if (failWith) throw Object.assign(new Error("push error"), { statusCode: failWith });
-      sent.push({ endpoint: sub.endpoint, payload: JSON.parse(payload) });
-    },
+  sendNotification: async (sub: { endpoint: string }, payload: string) => {
+    if (failWith) throw Object.assign(new Error("push error"), { statusCode: failWith });
+    sent.push({ endpoint: sub.endpoint, payload: JSON.parse(payload) });
   },
 }));
 

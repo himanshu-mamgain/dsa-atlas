@@ -1,8 +1,8 @@
 /** Shared by the push functions: storage, VAPID setup and sending. */
 import { getStore } from "@netlify/blobs";
-import webpush from "web-push";
-import type { PushRegistration } from "@dsa-atlas/shared";
-import type { ReminderMessage } from "@dsa-atlas/review";
+import { sendNotification } from "web-push";
+import type { PushRegistration } from "../../packages/shared/src/index";
+import type { ReminderMessage } from "../../packages/review/src/index";
 
 export interface StoredRegistration extends PushRegistration {
   /** Local date ("YYYY-MM-DD") the last daily reminder went out. */
@@ -21,8 +21,9 @@ export async function keyFor(endpoint: string): Promise<string> {
 export function vapid() {
   const publicKey = process.env.VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
-  const subject = process.env.VAPID_SUBJECT;
-  if (!publicKey || !privateKey || !subject) return null;
+  // Push services contact this address if the site's pushes misbehave.
+  const subject = process.env.VAPID_SUBJECT || "mailto:noreply@dsa-atz.netlify.app";
+  if (!publicKey || !privateKey) return null;
   return { publicKey, privateKey, subject };
 }
 
@@ -33,7 +34,7 @@ export async function send(reg: PushRegistration, msg: ReminderMessage): Promise
   const keys = vapid();
   if (!keys) return "failed";
   try {
-    await webpush.sendNotification(reg.subscription, JSON.stringify(msg), {
+    await sendNotification(reg.subscription, JSON.stringify(msg), {
       TTL: 6 * 60 * 60,
       urgency: "normal",
       vapidDetails: { subject: keys.subject, publicKey: keys.publicKey, privateKey: keys.privateKey },
