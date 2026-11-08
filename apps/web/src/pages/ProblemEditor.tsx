@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ExternalLink, GitCompare, Plus, Trash2, Network } from "lucide-react";
+import { Check, ExternalLink, GitCompare, Plus, Trash2, Network } from "lucide-react";
 import {
   APPROACH_KINDS,
   APPROACH_LABELS,
@@ -30,7 +30,7 @@ const list = (s: string) =>
     .map((x) => x.trim())
     .filter(Boolean);
 
-export function ProblemPage({ id }: { id: string }) {
+export function ProblemEditor({ id }: { id: string }) {
   const [p, setP] = useState<Problem | null | undefined>(undefined);
   const [approachId, setApproachId] = useState<string>("");
   const [lang, setLang] = useState<Language>("cpp");
@@ -109,6 +109,20 @@ export function ProblemPage({ id }: { id: string }) {
 
   return (
     <div className="stack">
+      <div className="card-head editing-bar">
+        <span className="muted small">Editing · changes save automatically</span>
+        <button
+          className="btn primary"
+          onClick={async () => {
+            window.clearTimeout(saveTimer.current);
+            pending.current = null;
+            await saveProblem(p);
+            navigate(`/?problem=${encodeURIComponent(p.id)}`, { replace: true });
+          }}
+        >
+          <Check size={16} aria-hidden /> Done
+        </button>
+      </div>
       {/* Header */}
       <section className="card">
         <input className="title-input" value={p.title} onChange={(e) => update((x) => ({ ...x, title: e.target.value }))} aria-label="Title" />

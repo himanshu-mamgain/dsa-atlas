@@ -2,8 +2,11 @@ import { useRef } from "react";
 import Editor, { DiffEditor, type OnMount } from "@monaco-editor/react";
 import type { Language } from "@dsa-atlas/shared";
 import "./monaco";
+import { useTheme } from "../theme";
 
 type Ed = Parameters<OnMount>[0];
+
+const useMonacoTheme = () => (useTheme() === "light" ? "atlas-light" : "atlas-dark");
 
 const isNarrow = () => window.matchMedia("(max-width: 640px)").matches;
 
@@ -37,6 +40,7 @@ export default function CodeEditor({
   height?: number;
 }) {
   const ref = useRef<Ed | null>(null);
+  const monacoTheme = useMonacoTheme();
 
   const insert = (s: string) => {
     const ed = ref.current;
@@ -57,7 +61,7 @@ export default function CodeEditor({
       </div>
       <Editor
         height={height}
-        theme="atlas-dark"
+        theme={monacoTheme}
         language={language}
         value={value}
         onChange={(v) => onChange(v ?? "")}
@@ -78,11 +82,12 @@ export function CompareEditor({
   right: { language: Language; code: string };
   height?: number;
 }) {
+  const monacoTheme = useMonacoTheme();
   return (
     <div className="editor">
       <DiffEditor
         height={height}
-        theme="atlas-dark"
+        theme={monacoTheme}
         original={left.code}
         modified={right.code}
         originalLanguage={left.language}

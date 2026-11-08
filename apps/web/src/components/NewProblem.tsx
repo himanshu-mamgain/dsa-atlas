@@ -16,7 +16,7 @@ export function NewProblem() {
         if (await db.problems.get(id)) id = `${id}-${uid().slice(0, 4)}`;
         await db.problems.add(blankProblem(t, id));
         setTitle("");
-        navigate(hrefFor({ name: "problem", id }));
+        navigate(hrefFor({ name: "problem", id, edit: true }));
       }}
     >
       <input
