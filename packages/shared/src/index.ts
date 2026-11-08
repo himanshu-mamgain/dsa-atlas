@@ -104,8 +104,6 @@ export interface PushRegistration extends ReminderSettings {
   items: ReminderItem[];
 }
 
-export const STRUCTURA_URL = "https://structura-web.netlify.app";
-export const structuraTopicUrl = (id: string) => `${STRUCTURA_URL}/?topic=${encodeURIComponent(id)}`;
 
 export const slugify = (s: string) =>
   s
@@ -113,3 +111,5 @@ export const slugify = (s: string) =>
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+
+export * from "./ecosystem";

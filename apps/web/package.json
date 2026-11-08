@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run typecheck && vite build",
+    "build": "node scripts/structura-topics.mjs && npm run typecheck && vite build",
+    "structura-topics": "node scripts/structura-topics.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json",
     "icons": "pwa-assets-generator"
