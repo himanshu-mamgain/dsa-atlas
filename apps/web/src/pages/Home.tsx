@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
-import { Flame, CalendarCheck, Layers, Plus } from "lucide-react";
+import { Brain, Flame, CalendarCheck, Layers, Plus } from "lucide-react";
 import { dueLabel, isDue, streak } from "@dsa-atlas/review";
 import { db } from "../db/db";
 import { Link } from "../components/Link";
@@ -33,7 +33,14 @@ export function Home() {
       </section>
 
       <section className="card">
-        <h2>Revise today</h2>
+        <div className="card-head">
+          <h2>Revise today</h2>
+          {due.length > 0 && (
+            <Link to={{ name: "revise" }} className="btn primary">
+              <Brain size={16} aria-hidden /> Start revision ({due.length})
+            </Link>
+          )}
+        </div>
         {due.length === 0 ? (
           <p className="muted">Nothing due. Add a problem or solve something new.</p>
         ) : (

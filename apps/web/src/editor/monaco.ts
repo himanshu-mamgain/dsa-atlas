@@ -22,4 +22,15 @@ monaco.editor.defineTheme("atlas-dark", {
   },
 });
 
+monaco.editor.defineTheme("atlas-light", {
+  base: "vs",
+  inherit: true,
+  rules: [],
+  colors: {
+    "editor.background": "#f8f9fc",
+    "editor.lineHighlightBackground": "#eef1f7",
+    "editorGutter.background": "#f8f9fc",
+  },
+});
+
 export { monaco };

@@ -4,6 +4,8 @@ import { MotionConfig } from "motion/react";
 import { App } from "./App";
 import { registerServiceWorker } from "./pwa";
 import { startReminderSync } from "./push/push";
+import { requestPersistentStorage } from "./storage";
+import "./theme";
 import "./styles.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -16,3 +18,4 @@ createRoot(document.getElementById("root")!).render(
 
 registerServiceWorker();
 startReminderSync();
+requestPersistentStorage();

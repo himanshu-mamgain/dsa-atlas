@@ -3,6 +3,7 @@ import { Download, Upload } from "lucide-react";
 import { exportAll, importAll } from "../db/db";
 import { INTERVAL_DAYS } from "@dsa-atlas/review";
 import { Reminders } from "../push/Reminders";
+import { Appearance, StorageCard } from "../components/DeviceSettings";
 
 export function Settings() {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -58,6 +59,8 @@ export function Settings() {
       </section>
 
       <Reminders />
+      <Appearance />
+      <StorageCard />
     </div>
   );
 }
