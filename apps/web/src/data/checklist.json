@@ -1,0 +1,900 @@
+{
+ "source": "https://app.notion.com/p/38663e41004f819785bfdf128b6e6d40",
+ "tiers": [
+  {
+   "tier": 1,
+   "title": "Must Solve (Highest Frequency)",
+   "sections": [
+    {
+     "pattern": "Recursion",
+     "items": [
+      {
+       "id": "palindrome-check-using-recursion",
+       "title": "Palindrome Check using Recursion",
+       "notion": "https://app.notion.com/p/3e663e41004f8040a932c97b0e27fd0a",
+       "done": false
+      },
+      {
+       "id": "sum-of-digits-using-recursion",
+       "title": "Sum of Digits Using Recursion",
+       "notion": "https://app.notion.com/p/3ea63e41004f8098b189d083a1740428",
+       "done": false
+      },
+      {
+       "id": "rope-cutting-problem",
+       "title": "Rope Cutting Problem",
+       "done": false
+      },
+      {
+       "id": "generate-subsets-recursive",
+       "title": "Generate Subsets (recursive)",
+       "notion": "https://app.notion.com/p/3ec63e41004f809fab59c10c9037bef7",
+       "done": false
+      },
+      {
+       "id": "tower-of-hanoi",
+       "title": "Tower of Hanoi",
+       "done": false
+      },
+      {
+       "id": "josephus-problem",
+       "title": "Josephus Problem",
+       "done": false
+      },
+      {
+       "id": "subset-sum-problem-recursive-solution",
+       "title": "Subset Sum Problem (Recursive Solution)",
+       "done": false
+      },
+      {
+       "id": "printing-all-permutations",
+       "title": "Printing all Permutations",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Arrays & Strings",
+     "items": [
+      {
+       "id": "two-sum-hash-map",
+       "title": "Two Sum (Hash Map)",
+       "notion": "https://app.notion.com/p/39563e41004f80ca8a3dc01bde0107a5",
+       "done": true
+      },
+      {
+       "id": "best-time-to-buy-and-sell-stock",
+       "title": "Best Time to Buy and Sell Stock",
+       "notion": "https://app.notion.com/p/38a63e41004f8050b71dcae6af5033db",
+       "done": true
+      },
+      {
+       "id": "contains-duplicate",
+       "title": "Contains Duplicate",
+       "notion": "https://app.notion.com/p/3c363e41004f8054a880d073d85366de",
+       "done": true
+      },
+      {
+       "id": "product-of-array-except-self",
+       "title": "Product of Array Except Self",
+       "notion": "https://app.notion.com/p/3be63e41004f8061b466c05f04d939fe",
+       "done": true
+      },
+      {
+       "id": "maximum-subarray-kadanes-algorithm",
+       "title": "Maximum Subarray (Kadane’s algorithm)",
+       "notion": "https://app.notion.com/p/3cc63e41004f80d894b4dd0cdd6442df",
+       "done": true
+      },
+      {
+       "id": "maximum-product-subarray",
+       "title": "Maximum Product Subarray",
+       "notion": "https://app.notion.com/p/3cc63e41004f80b38addf19184de39c9",
+       "done": true
+      },
+      {
+       "id": "find-minimum-in-rotated-sorted-array",
+       "title": "Find Minimum in Rotated Sorted Array",
+       "notion": "https://app.notion.com/p/3d063e41004f8081beb5f787425e9ec8",
+       "done": true
+      },
+      {
+       "id": "search-in-rotated-sorted-array",
+       "title": "Search in Rotated Sorted Array",
+       "notion": "https://app.notion.com/p/3d063e41004f80f482b7e6a5caad6075",
+       "done": false
+      },
+      {
+       "id": "3sum",
+       "title": "3Sum",
+       "notion": "https://app.notion.com/p/3cc63e41004f8036973dd6056a85ce30",
+       "done": true
+      },
+      {
+       "id": "container-with-most-water",
+       "title": "Container With Most Water",
+       "notion": "https://app.notion.com/p/3cc63e41004f8018bd03eb0be52a4255",
+       "done": true
+      },
+      {
+       "id": "trapping-rain-water",
+       "title": "Trapping Rain Water",
+       "notion": "https://app.notion.com/p/3d163e41004f80538879f0749f8feac8",
+       "done": true
+      },
+      {
+       "id": "longest-substring-without-repeating-characters",
+       "title": "Longest Substring Without Repeating Characters",
+       "notion": "https://app.notion.com/p/3cf63e41004f808e8e47e04a6dd8c113",
+       "done": false
+      },
+      {
+       "id": "longest-repeating-character-replacement",
+       "title": "Longest Repeating Character Replacement",
+       "notion": "https://app.notion.com/p/3d163e41004f808a8be3e7ec86bd57dd",
+       "done": false
+      },
+      {
+       "id": "minimum-window-substring",
+       "title": "Minimum Window Substring",
+       "notion": "https://app.notion.com/p/3d163e41004f80e9a50af58c4b364802",
+       "done": false
+      },
+      {
+       "id": "valid-anagram",
+       "title": "Valid Anagram",
+       "notion": "https://app.notion.com/p/39b63e41004f80e39907ef5a1b06cec0",
+       "done": true
+      },
+      {
+       "id": "group-anagrams",
+       "title": "Group Anagrams",
+       "notion": "https://app.notion.com/p/3cc63e41004f800a899fd98884c4bdd0",
+       "done": true
+      },
+      {
+       "id": "valid-parentheses",
+       "title": "Valid Parentheses",
+       "notion": "https://app.notion.com/p/3cd63e41004f80a29223ed4367f89ab3",
+       "done": true
+      },
+      {
+       "id": "merge-intervals",
+       "title": "Merge Intervals",
+       "notion": "https://app.notion.com/p/3d263e41004f80a3b138fcabfcc77b11",
+       "done": false
+      },
+      {
+       "id": "insert-interval",
+       "title": "Insert Interval",
+       "notion": "https://app.notion.com/p/3d263e41004f80be9ffcc5635ccfaf9c",
+       "done": false
+      },
+      {
+       "id": "longest-common-prefix",
+       "title": "Longest Common Prefix",
+       "notion": "https://app.notion.com/p/3b363e41004f80548fcbd4db886299c8",
+       "done": false
+      },
+      {
+       "id": "longest-palindromic-substring-expand-around-center-dp",
+       "title": "Longest Palindromic Substring (expand-around-center / DP)",
+       "notion": "https://app.notion.com/p/3d263e41004f80bd9e8be3820e165d99",
+       "done": false
+      },
+      {
+       "id": "longest-consecutive-sequence",
+       "title": "Longest Consecutive Sequence",
+       "notion": "https://app.notion.com/p/3ca63e41004f80cc85e0e97263642c5c",
+       "done": false
+      },
+      {
+       "id": "valid-palindrome",
+       "title": "Valid Palindrome",
+       "notion": "https://app.notion.com/p/39b63e41004f816fbc85c35a40b62dc0",
+       "done": false
+      },
+      {
+       "id": "sort-colors",
+       "title": "Sort Colors",
+       "notion": "https://app.notion.com/p/3cd63e41004f8048a63cef8837fc03df",
+       "done": true
+      }
+     ]
+    },
+    {
+     "pattern": "Linked List",
+     "items": [
+      {
+       "id": "reverse-linked-list",
+       "title": "Reverse Linked List",
+       "notion": "https://app.notion.com/p/3d363e41004f804792fcf050b719cf0d",
+       "done": false
+      },
+      {
+       "id": "merge-two-sorted-lists",
+       "title": "Merge Two Sorted Lists",
+       "notion": "https://app.notion.com/p/3d363e41004f80838274dc8c61d5fb4c",
+       "done": false
+      },
+      {
+       "id": "linked-list-cycle",
+       "title": "Linked List Cycle",
+       "notion": "https://app.notion.com/p/3d363e41004f80c19acbc0b94726eed2",
+       "done": false
+      },
+      {
+       "id": "remove-nth-node-from-end-of-list",
+       "title": "Remove Nth Node From End of List",
+       "notion": "https://app.notion.com/p/3d363e41004f809e932feb8f9e5ee0b1",
+       "done": false
+      },
+      {
+       "id": "reorder-list",
+       "title": "Reorder List",
+       "notion": "https://app.notion.com/p/3d463e41004f8062a22bce986c784136",
+       "done": false
+      },
+      {
+       "id": "add-two-numbers",
+       "title": "Add Two Numbers",
+       "notion": "https://app.notion.com/p/3d463e41004f809f9bbad76f1142ed8b",
+       "done": false
+      },
+      {
+       "id": "lru-cache",
+       "title": "LRU Cache",
+       "notion": "https://app.notion.com/p/3d463e41004f808ab91be80dbfb2eccf",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Trees",
+     "items": [
+      {
+       "id": "maximum-depth-of-binary-tree",
+       "title": "Maximum Depth of Binary Tree",
+       "notion": "https://app.notion.com/p/3e163e41004f8082a435c1ad33f721df",
+       "done": false
+      },
+      {
+       "id": "same-tree",
+       "title": "Same Tree",
+       "notion": "https://app.notion.com/p/3e163e41004f80b88812cb75a03a2685",
+       "done": false
+      },
+      {
+       "id": "invert-binary-tree",
+       "title": "Invert Binary Tree",
+       "notion": "https://app.notion.com/p/3e163e41004f802da14edbcaa283d77a",
+       "done": false
+      },
+      {
+       "id": "binary-tree-level-order-traversal",
+       "title": "Binary Tree Level Order Traversal",
+       "notion": "https://app.notion.com/p/3e163e41004f8019bf12de4982751424",
+       "done": false
+      },
+      {
+       "id": "validate-binary-search-tree",
+       "title": "Validate Binary Search Tree",
+       "done": false
+      },
+      {
+       "id": "lowest-common-ancestor-of-bst",
+       "title": "Lowest Common Ancestor of BST",
+       "done": false
+      },
+      {
+       "id": "binary-tree-right-side-view",
+       "title": "Binary Tree Right Side View",
+       "done": false
+      },
+      {
+       "id": "count-good-nodes-in-binary-tree",
+       "title": "Count Good Nodes in Binary Tree",
+       "done": false
+      },
+      {
+       "id": "kth-smallest-element-in-bst",
+       "title": "Kth Smallest Element in BST",
+       "done": false
+      },
+      {
+       "id": "diameter-of-binary-tree",
+       "title": "Diameter of Binary Tree",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Graphs",
+     "items": [
+      {
+       "id": "number-of-islands",
+       "title": "Number of Islands",
+       "done": false
+      },
+      {
+       "id": "clone-graph",
+       "title": "Clone Graph",
+       "done": false
+      },
+      {
+       "id": "max-area-of-island",
+       "title": "Max Area of Island",
+       "done": false
+      },
+      {
+       "id": "pacific-atlantic-water-flow",
+       "title": "Pacific Atlantic Water Flow",
+       "done": false
+      },
+      {
+       "id": "course-schedule",
+       "title": "Course Schedule",
+       "done": false
+      },
+      {
+       "id": "number-of-connected-components",
+       "title": "Number of Connected Components",
+       "done": false
+      },
+      {
+       "id": "rotting-oranges",
+       "title": "Rotting Oranges",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "DP",
+     "items": [
+      {
+       "id": "climbing-stairs",
+       "title": "Climbing Stairs",
+       "done": false
+      },
+      {
+       "id": "house-robber",
+       "title": "House Robber",
+       "done": false
+      },
+      {
+       "id": "coin-change",
+       "title": "Coin Change",
+       "done": false
+      },
+      {
+       "id": "longest-increasing-subsequence",
+       "title": "Longest Increasing Subsequence",
+       "done": false
+      },
+      {
+       "id": "unique-paths",
+       "title": "Unique Paths",
+       "done": false
+      },
+      {
+       "id": "jump-game-greedy",
+       "title": "Jump Game (greedy)",
+       "done": false
+      },
+      {
+       "id": "word-break",
+       "title": "Word Break",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tier": 2,
+   "title": "Very Commonly Asked",
+   "sections": [
+    {
+     "pattern": "Arrays",
+     "items": [
+      {
+       "id": "spiral-matrix",
+       "title": "Spiral Matrix",
+       "done": false
+      },
+      {
+       "id": "rotate-image",
+       "title": "Rotate Image",
+       "done": false
+      },
+      {
+       "id": "set-matrix-zeroes",
+       "title": "Set Matrix Zeroes",
+       "done": false
+      },
+      {
+       "id": "jump-game-ii-greedy",
+       "title": "Jump Game II (greedy)",
+       "done": false
+      },
+      {
+       "id": "gas-station-greedy",
+       "title": "Gas Station (greedy)",
+       "done": false
+      },
+      {
+       "id": "candy-greedy",
+       "title": "Candy (greedy)",
+       "done": false
+      },
+      {
+       "id": "first-missing-positive",
+       "title": "First Missing Positive",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Binary Search",
+     "items": [
+      {
+       "id": "koko-eating-bananas",
+       "title": "Koko Eating Bananas",
+       "done": false
+      },
+      {
+       "id": "capacity-to-ship-packages",
+       "title": "Capacity to Ship Packages",
+       "done": false
+      },
+      {
+       "id": "find-first-and-last-position",
+       "title": "Find First and Last Position",
+       "done": false
+      },
+      {
+       "id": "search-a-2d-matrix",
+       "title": "Search a 2D Matrix",
+       "done": false
+      },
+      {
+       "id": "time-based-key-value-store",
+       "title": "Time Based Key Value Store",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Trees",
+     "items": [
+      {
+       "id": "binary-tree-maximum-path-sum",
+       "title": "Binary Tree Maximum Path Sum",
+       "done": false
+      },
+      {
+       "id": "serialize-and-deserialize-binary-tree",
+       "title": "Serialize and Deserialize Binary Tree",
+       "done": false
+      },
+      {
+       "id": "construct-bt-from-preorder-and-inorder-traversal",
+       "title": "Construct BT from Preorder and Inorder Traversal",
+       "done": false
+      },
+      {
+       "id": "path-sum-ii",
+       "title": "Path Sum II",
+       "done": false
+      },
+      {
+       "id": "flatten-binary-tree-to-linked-list",
+       "title": "Flatten Binary Tree to Linked List",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Graphs",
+     "items": [
+      {
+       "id": "course-schedule-ii",
+       "title": "Course Schedule II",
+       "done": false
+      },
+      {
+       "id": "word-ladder",
+       "title": "Word Ladder",
+       "done": false
+      },
+      {
+       "id": "surrounded-regions",
+       "title": "Surrounded Regions",
+       "done": false
+      },
+      {
+       "id": "graph-valid-tree",
+       "title": "Graph Valid Tree",
+       "done": false
+      },
+      {
+       "id": "walls-and-gates",
+       "title": "Walls and Gates",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "DP",
+     "items": [
+      {
+       "id": "house-robber-ii",
+       "title": "House Robber II",
+       "done": false
+      },
+      {
+       "id": "palindromic-substrings",
+       "title": "Palindromic Substrings",
+       "done": false
+      },
+      {
+       "id": "decode-ways",
+       "title": "Decode Ways",
+       "done": false
+      },
+      {
+       "id": "coin-change-ii",
+       "title": "Coin Change II",
+       "done": false
+      },
+      {
+       "id": "target-sum",
+       "title": "Target Sum",
+       "done": false
+      },
+      {
+       "id": "partition-equal-subset-sum",
+       "title": "Partition Equal Subset Sum",
+       "done": false
+      },
+      {
+       "id": "longest-common-subsequence",
+       "title": "Longest Common Subsequence",
+       "done": false
+      },
+      {
+       "id": "edit-distance",
+       "title": "Edit Distance",
+       "done": false
+      },
+      {
+       "id": "distinct-subsequences",
+       "title": "Distinct Subsequences",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Stack",
+     "items": [
+      {
+       "id": "daily-temperatures",
+       "title": "Daily Temperatures",
+       "done": false
+      },
+      {
+       "id": "largest-rectangle-in-histogram",
+       "title": "Largest Rectangle in Histogram",
+       "done": false
+      },
+      {
+       "id": "min-stack",
+       "title": "Min Stack",
+       "done": false
+      },
+      {
+       "id": "evaluate-reverse-polish-notation",
+       "title": "Evaluate Reverse Polish Notation",
+       "done": false
+      },
+      {
+       "id": "generate-parentheses",
+       "title": "Generate Parentheses",
+       "done": false
+      },
+      {
+       "id": "car-fleet",
+       "title": "Car Fleet",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Heap / Priority Queue",
+     "items": [
+      {
+       "id": "kth-largest-element-in-a-stream",
+       "title": "Kth Largest Element in a Stream",
+       "done": false
+      },
+      {
+       "id": "last-stone-weight",
+       "title": "Last Stone Weight",
+       "done": false
+      },
+      {
+       "id": "kth-largest-element-in-an-array",
+       "title": "Kth Largest Element in an Array",
+       "done": false
+      },
+      {
+       "id": "top-k-frequent-elements",
+       "title": "Top K Frequent Elements",
+       "done": false
+      },
+      {
+       "id": "k-closest-points-to-origin",
+       "title": "K Closest Points to Origin",
+       "done": false
+      },
+      {
+       "id": "task-scheduler",
+       "title": "Task Scheduler",
+       "done": false
+      },
+      {
+       "id": "design-twitter",
+       "title": "Design Twitter",
+       "done": false
+      },
+      {
+       "id": "find-median-from-data-stream",
+       "title": "Find Median from Data Stream",
+       "done": false
+      },
+      {
+       "id": "merge-k-sorted-lists",
+       "title": "Merge K Sorted Lists",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Queue",
+     "items": [
+      {
+       "id": "implement-queue-using-stacks",
+       "title": "Implement Queue using Stacks",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Deque",
+     "items": [
+      {
+       "id": "sliding-window-maximum",
+       "title": "Sliding Window Maximum",
+       "done": false
+      },
+      {
+       "id": "design-circular-deque",
+       "title": "Design Circular Deque",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Sorting",
+     "items": [
+      {
+       "id": "sort-an-array-implement-merge-sort-or-quick-sort-from-scratch",
+       "title": "Sort an Array (implement Merge Sort or Quick Sort from scratch)",
+       "done": false
+      },
+      {
+       "id": "merge-sorted-array-in-place-merge-variant",
+       "title": "Merge Sorted Array (in-place merge variant)",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tier": 3,
+   "title": "Senior / Tough Rounds",
+   "sections": [
+    {
+     "pattern": "Backtracking",
+     "items": [
+      {
+       "id": "subsets-i-ii",
+       "title": "Subsets I & II",
+       "done": false
+      },
+      {
+       "id": "permutations-i-ii",
+       "title": "Permutations I & II",
+       "done": false
+      },
+      {
+       "id": "combination-sum-i-ii",
+       "title": "Combination Sum I & II",
+       "done": false
+      },
+      {
+       "id": "n-queens",
+       "title": "N-Queens",
+       "done": false
+      },
+      {
+       "id": "sudoku-solver",
+       "title": "Sudoku Solver",
+       "done": false
+      },
+      {
+       "id": "palindrome-partitioning",
+       "title": "Palindrome Partitioning",
+       "done": false
+      },
+      {
+       "id": "word-search",
+       "title": "Word Search",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Trie",
+     "items": [
+      {
+       "id": "implement-trie",
+       "title": "Implement Trie",
+       "done": false
+      },
+      {
+       "id": "add-and-search-word",
+       "title": "Add and Search Word",
+       "done": false
+      },
+      {
+       "id": "word-search-ii",
+       "title": "Word Search II",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Advanced Graph",
+     "items": [
+      {
+       "id": "alien-dictionary-topological-sort",
+       "title": "Alien Dictionary (topological sort)",
+       "done": false
+      },
+      {
+       "id": "cheapest-flights-within-k-stops",
+       "title": "Cheapest Flights Within K Stops",
+       "done": false
+      },
+      {
+       "id": "network-delay-time-dijkstra",
+       "title": "Network Delay Time (Dijkstra)",
+       "done": false
+      },
+      {
+       "id": "swim-in-rising-water",
+       "title": "Swim in Rising Water",
+       "done": false
+      },
+      {
+       "id": "redundant-connection-union-find",
+       "title": "Redundant Connection (Union Find)",
+       "done": false
+      },
+      {
+       "id": "accounts-merge",
+       "title": "Accounts Merge",
+       "done": false
+      }
+     ]
+    },
+    {
+     "pattern": "Advanced DP",
+     "items": [
+      {
+       "id": "regular-expression-matching",
+       "title": "Regular Expression Matching",
+       "done": false
+      },
+      {
+       "id": "burst-balloons",
+       "title": "Burst Balloons",
+       "done": false
+      },
+      {
+       "id": "maximum-profit-in-job-scheduling",
+       "title": "Maximum Profit in Job Scheduling",
+       "done": false
+      },
+      {
+       "id": "interleaving-string",
+       "title": "Interleaving String",
+       "done": false
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "practice": [
+  "Read problem — don’t look at solution",
+  "Identify pattern (which category does this belong to?)",
+  "Write brute force first",
+  "Optimise with pattern",
+  "Code clean solution",
+  "Check time + space complexity",
+  "Test with edge cases",
+  "If stuck > 20 min — read hint only, not full solution",
+  "Write the pattern's invariant in one line before moving on"
+ ],
+ "signals": [
+  {
+   "when": "Sorted array, find pair/target",
+   "think": "Two Pointers"
+  },
+  {
+   "when": "Subarray/substring with condition",
+   "think": "Sliding Window"
+  },
+  {
+   "when": "Sorted array, O(log n)",
+   "think": "Binary Search"
+  },
+  {
+   "when": "Frequency, count, pair lookup",
+   "think": "Hash Map"
+  },
+  {
+   "when": "Matching brackets, next greater",
+   "think": "Stack"
+  },
+  {
+   "when": "Shortest path, level order",
+   "think": "BFS"
+  },
+  {
+   "when": "All paths, cycle detection, islands",
+   "think": "DFS"
+  },
+  {
+   "when": "All subsets/permutations",
+   "think": "Backtracking"
+  },
+  {
+   "when": "Prefix search, word match",
+   "think": "Trie"
+  },
+  {
+   "when": "Min/max of dynamic set",
+   "think": "Heap"
+  },
+  {
+   "when": "Range sum queries",
+   "think": "Prefix Sum"
+  },
+  {
+   "when": "Connected components",
+   "think": "Union Find"
+  },
+  {
+   "when": "Overlapping subproblems, optimal",
+   "think": "DP"
+  },
+  {
+   "when": "Dependencies, ordering",
+   "think": "Topological Sort"
+  }
+ ]
+}

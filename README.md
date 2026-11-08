@@ -12,6 +12,9 @@ Installable PWA (Android, iOS, desktop) that works offline. Notes stay on your d
 - **Compare**: diff any two solutions, e.g. brute C++ vs optimal Python, with per-language notes
 - **Complexity graph** of every approach, with optional reference curves
 - **Spaced repetition**: problems come back after 1 → 3 → 7 → 14 → 30 → 60 days; streak and topic progress on the home screen
+- **Master Checklist**: your Notion "Must Solve Problems by Pattern" list (3 tiers, 134 problems) with ticks, Notion links, practice steps and pattern signals. Snapshot in `apps/web/src/data/notion/`; regenerate with `npm run checklist -w @dsa-atlas/web`
+- **Company goals**: target a company by a date (GoKwik, Ram Fincorp, ixigo, Cars24, CarDekho, or any), start from your checklist, see the pace per day and what to solve next
+- **Web-first layout**: sidebar on desktop, bottom tabs on phones
 - **Backup**: JSON export/import
 - **Push reminders** (phase 2): a daily notification at your chosen time when problems are due. Only titles and due dates go to the server.
 
