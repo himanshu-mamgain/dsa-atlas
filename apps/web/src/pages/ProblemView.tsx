@@ -2,13 +2,14 @@ import { lazy, Suspense, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
 import { ExternalLink, Network, Pencil, LineChart } from "lucide-react";
-import { structuraTopicUrl } from "@dsa-atlas/shared";
+import { ecoLinks } from "@dsa-atlas/shared";
 import { dueLabel } from "@dsa-atlas/review";
 import { db, reviewProblem } from "../db/db";
 import { Link } from "../components/Link";
 import { DifficultyBadge } from "../components/Badges";
 import { ApproachLadder, SolutionViewer } from "../components/SolutionViewer";
 import { ReviewBar } from "../components/ReviewBar";
+import { structuraTitle, structuraTopic } from "../structura";
 
 const ComplexityGraph = lazy(() => import("../graph/ComplexityGraph"));
 
@@ -97,14 +98,20 @@ export function ProblemView({ id }: { id: string }) {
 
       {p.structuraTopics.length > 0 && (
         <section className="card">
-          <h2>Related system design</h2>
-          <div className="chips">
+          <h2>
+            <Network size={18} aria-hidden /> See it in Structura
+          </h2>
+          <ul className="eco-links">
             {p.structuraTopics.map((t) => (
-              <a key={t} className="chip" href={structuraTopicUrl(t)} target="_blank" rel="noreferrer">
-                <Network size={14} aria-hidden /> Structura: {t}
-              </a>
+              <li key={t}>
+                <a className="eco-link" href={ecoLinks.structuraTopic(t)} target="_blank" rel="noreferrer">
+                  <strong>{structuraTitle(t)}</strong>
+                  {structuraTopic(t) && <span className="muted small">{structuraTopic(t)!.blurb}</span>}
+                  <ExternalLink size={14} aria-hidden className="eco-link-icon" />
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
       )}
 

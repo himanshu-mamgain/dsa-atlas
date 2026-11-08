@@ -5,10 +5,11 @@ import { useSyncExternalStore } from "react";
  *   ?problem=<id>           read view
  *   ?problem=<id>&edit=1    editor
  *   ?page=problems|settings|revise
+ *   ?page=problems&structura=<topic id>   problems linked to a Structura topic
  */
 export type Route =
   | { name: "home" }
-  | { name: "problems" }
+  | { name: "problems"; structura?: string }
   | { name: "settings" }
   | { name: "revise" }
   | { name: "problem"; id: string; edit?: boolean };
@@ -18,7 +19,8 @@ function parse(): Route {
   const id = q.get("problem");
   if (id) return { name: "problem", id, edit: q.get("edit") === "1" };
   const page = q.get("page");
-  if (page === "problems" || page === "settings" || page === "revise") return { name: page };
+  if (page === "problems") return { name: "problems", structura: q.get("structura") ?? undefined };
+  if (page === "settings" || page === "revise") return { name: page };
   return { name: "home" };
 }
 
@@ -40,6 +42,7 @@ export function navigate(href: string, { replace = false } = {}) {
 
 export const hrefFor = (r: Route) => {
   if (r.name === "home") return "/";
+  if (r.name === "problems" && r.structura) return `/?page=problems&structura=${encodeURIComponent(r.structura)}`;
   if (r.name === "problem") return `/?problem=${encodeURIComponent(r.id)}${r.edit ? "&edit=1" : ""}`;
   return `/?page=${r.name}`;
 };

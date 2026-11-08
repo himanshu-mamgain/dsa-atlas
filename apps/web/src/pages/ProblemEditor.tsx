@@ -1,12 +1,11 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, ExternalLink, GitCompare, Plus, Trash2, Network } from "lucide-react";
+import { Check, ExternalLink, GitCompare, Plus, Trash2 } from "lucide-react";
 import {
   APPROACH_KINDS,
   APPROACH_LABELS,
   LANGUAGES,
   LANGUAGE_LABELS,
-  structuraTopicUrl,
   type Approach,
   type Difficulty,
   type Language,
@@ -18,6 +17,7 @@ import { dueLabel } from "@dsa-atlas/review";
 import { db, reviewProblem, saveProblem, uid } from "../db/db";
 import { navigate } from "../router";
 import { BigO, KindBadge } from "../components/Badges";
+import { StructuraPicker } from "../components/StructuraPicker";
 
 // Heavy pieces load only when a problem is opened.
 const CodeEditor = lazy(() => import("../editor/CodeEditor"));
@@ -157,22 +157,8 @@ export function ProblemEditor({ id }: { id: string }) {
           </label>
           <ListField label="Topics" value={p.topics} placeholder="Array, Hashing" onChange={(v) => update((x) => ({ ...x, topics: v }))} />
           <ListField label="Patterns" value={p.patterns} placeholder="Sliding window, Two pointers" onChange={(v) => update((x) => ({ ...x, patterns: v }))} />
-          <ListField
-            label="Structura topics"
-            value={p.structuraTopics}
-            placeholder="consistent-hashing, rate-limiter"
-            onChange={(v) => update((x) => ({ ...x, structuraTopics: v }))}
-          />
+          <StructuraPicker value={p.structuraTopics} onChange={(v) => update((x) => ({ ...x, structuraTopics: v }))} />
         </div>
-        {p.structuraTopics.length > 0 && (
-          <div className="chips">
-            {p.structuraTopics.map((t) => (
-              <a key={t} className="chip" href={structuraTopicUrl(t)} target="_blank" rel="noreferrer">
-                <Network size={14} aria-hidden /> Structura: {t}
-              </a>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* Approaches */}
