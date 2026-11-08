@@ -7,6 +7,7 @@ import { startReminderSync } from "./push/push";
 import { requestPersistentStorage } from "./storage";
 import "./theme";
 import "./styles.css";
+import "./layout.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

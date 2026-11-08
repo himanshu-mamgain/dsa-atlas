@@ -113,3 +113,24 @@ export const slugify = (s: string) =>
     .replace(/^-+|-+$/g, "");
 
 export * from "./ecosystem";
+
+/** Checklist progress for one item of the Master Checklist (kept on the device). */
+export interface ChecklistState {
+  id: string;
+  done: boolean;
+  doneAt: number | null;
+  /** The DSA Atlas problem made from this item, if any. */
+  problemId?: string;
+}
+
+/** A practice target for a company: problems to finish by a date. */
+export interface Goal {
+  id: string;
+  company: string;
+  /** "YYYY-MM-DD". */
+  targetDate: string;
+  /** Checklist item ids ("c:<id>") and problem ids ("p:<id>"). */
+  items: string[];
+  note: string;
+  createdAt: number;
+}

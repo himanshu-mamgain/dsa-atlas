@@ -1,0 +1,683 @@
+/* =====================================================================
+   Web-first shell and the dashboard, checklist and goal pages.
+   Desktop: fixed sidebar + wide content. Phones: top bar + bottom tabs.
+   ===================================================================== */
+:root {
+  --sidebar-w: 248px;
+  --violet: #a78bfa;
+}
+
+.app {
+  min-height: 100dvh;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 14px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  z-index: 20;
+}
+
+.sidebar .brand {
+  padding: 4px 8px;
+  font-size: 1.1rem;
+}
+
+.sidebar .search-trigger {
+  margin: 0;
+  flex: none;
+  width: 100%;
+}
+
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.side-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.side-item:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.side-item.active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--text);
+}
+
+.side-item.active svg {
+  color: var(--accent);
+}
+
+.nav-badge {
+  margin-left: auto;
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.side-foot {
+  margin-top: auto;
+}
+
+.side-foot .switcher-menu {
+  top: auto;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: auto;
+  transform-origin: bottom left;
+}
+
+.content {
+  margin-left: var(--sidebar-w);
+  padding: 28px 36px 64px;
+  max-width: calc(1240px + var(--sidebar-w));
+}
+
+.mobile-bar,
+.tabbar {
+  display: none;
+}
+
+/* Pages */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-head,
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.page-head h1,
+.hero h1 {
+  font-size: 1.75rem;
+  margin: 2px 0 4px;
+}
+
+.page-head p,
+.hero p {
+  margin: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.86rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.big-btn {
+  padding: 11px 18px;
+  font-size: 0.95rem;
+}
+
+.small-btn {
+  padding: 5px 10px;
+  font-size: 0.82rem;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.stat-row .stat {
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.stat-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.tone-violet {
+  color: var(--violet);
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.next-row {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+}
+
+.goal-mini {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.goal-mini-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.goal-mini-row:hover {
+  background: var(--panel-2);
+}
+
+.goal-mini-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.goal-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--violet));
+}
+
+.goal-mark.sm {
+  width: 34px;
+  height: 34px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+}
+
+/* Checklist */
+.tier-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.tier-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.tier-tab[aria-selected="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.tier-name {
+  font-weight: 700;
+}
+
+.tier-title {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.tier-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.tier-progress .bar {
+  flex: 1;
+}
+
+.bar-fill {
+  display: block;
+}
+
+.bar.big {
+  height: 10px;
+}
+
+.checklist-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.checklist-aside {
+  position: sticky;
+  top: 20px;
+}
+
+.check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px;
+  border-top: 1px solid var(--line);
+}
+
+.check-row:first-child {
+  border-top: 0;
+}
+
+.check-box {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 7px;
+  border: 2px solid var(--line-strong);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+}
+
+.check-box[aria-checked="true"],
+.check-box.passive {
+  background: var(--optimal);
+  border-color: var(--optimal);
+}
+
+.check-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.check-row.is-done .check-title {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--muted) 60%, transparent);
+}
+
+.check-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.practice-steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.signals {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.86rem;
+}
+
+.signals div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.signals dt {
+  color: var(--muted);
+}
+
+.signals dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Goals */
+.goal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.goal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.15s;
+}
+
+.goal-card:hover {
+  border-color: var(--line-strong);
+}
+
+.goal-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.goal-top h2,
+.goal-top p {
+  margin: 0;
+}
+
+.goal-top p {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.goal-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.goal-progress .bar {
+  flex: 1;
+}
+
+.goal-pace {
+  margin: 0;
+}
+
+.goal-pace strong {
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.goal-next {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.new-goal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.new-goal h2 {
+  margin: 0;
+}
+
+.company-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.chip-btn.is-on {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.goal-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.add-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.add-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.add-option > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-option:hover {
+  background: var(--panel-2);
+}
+
+.page-head input[type="date"] {
+  width: auto;
+}
+
+/* Problem pages get a comfortable reading width on wide screens. */
+.content > .stack {
+  max-width: 1100px;
+}
+
+.editing-bar {
+  top: 12px;
+}
+
+/* Tablets */
+@media (max-width: 1100px) {
+  .dash-grid,
+  .checklist-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .checklist-aside {
+    position: static;
+  }
+
+  .stat-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Phones: top bar + bottom tabs */
+@media (max-width: 760px) {
+  .sidebar {
+    display: none;
+  }
+
+  .mobile-bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mobile-bar .search-trigger {
+    flex: 1;
+    margin: 0;
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 16px 16px calc(96px + env(safe-area-inset-bottom));
+  }
+
+  .tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-around;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    background: var(--panel);
+    border-top: 1px solid var(--line);
+  }
+
+  .tab-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .tab-item.active {
+    color: var(--accent);
+  }
+
+  .tab-item .nav-badge {
+    position: absolute;
+    top: -2px;
+    right: 0;
+    margin: 0;
+    min-width: 18px;
+    padding: 0 5px;
+  }
+
+  .page-head h1,
+  .hero h1 {
+    font-size: 1.4rem;
+  }
+
+  .goal-groups {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Three compact tier tabs side by side. */
+  .tier-tabs {
+    gap: 8px;
+  }
+
+  .tier-tab {
+    padding: 10px;
+  }
+
+  .tier-title {
+    display: none;
+  }
+
+  .tier-progress {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .next-row {
+    flex-wrap: wrap;
+  }
+
+  .next-row .row-title {
+    flex-basis: 100%;
+    white-space: normal;
+  }
+
+  .editing-bar {
+    top: 64px;
+  }
+
+  .check-row {
+    flex-wrap: wrap;
+  }
+
+  .check-title {
+    flex-basis: calc(100% - 40px);
+  }
+
+  .check-actions {
+    margin-left: 34px;
+  }
+}
