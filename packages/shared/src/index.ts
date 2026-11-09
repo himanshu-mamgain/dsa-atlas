@@ -137,4 +137,37 @@ export interface Goal {
   createdAt: number;
 }
 
+/** One measured run of a solution: steps and time per call at each n. */
+export interface MeasuredRun {
+  /** Hash of the code and example that were measured; a change makes the result stale. */
+  key: string;
+  /** "O(n log n)". */
+  bigO: string;
+  /** Fitted to counted steps, or to time when the code couldn't be counted. */
+  basis: "steps" | "time";
+  /** The fit on time alone, for comparison. */
+  timeBigO?: string;
+  /** What n means: "length of nums". */
+  n: string;
+  /** The worst input found: "all equal". */
+  variant: string;
+  points: { n: number; ms: number; steps?: number }[];
+  /** Why it stopped growing n: "size", "slow", "stack"… */
+  stopped: string;
+  at: number;
+}
+
+/** Your own attempt at a Master Checklist problem, from its solve page. */
+export interface Attempt {
+  /** The checklist item id. */
+  id: string;
+  language: Language;
+  code: string;
+  /** The example call used for measuring ("nums = [2,7,11,15], target = 9"). */
+  example?: string;
+  updatedAt: number;
+  /** Measurements by solution: "mine", or "ref:<title>" for one from your notes. */
+  runs?: Record<string, MeasuredRun>;
+}
+
 export * from "./notes";
