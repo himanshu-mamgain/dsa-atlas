@@ -1,0 +1,627 @@
+/* =====================================================================
+   The Structura look: a top app bar, tabs along the bottom on phones (in
+   the bar from 1024px), gradient buttons, rounded cards, pattern rings like
+   stories and tall tiles for what to solve next. Loaded after styles.css
+   and layout.css, so it wins where they disagree.
+   ===================================================================== */
+:root {
+  --tabbar: calc(60px + env(safe-area-inset-bottom));
+  --appbar: 62px;
+}
+
+.shell {
+  min-height: 100dvh;
+}
+
+/* ─── App bar ─── */
+.appbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--appbar);
+  padding: 10px 14px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+
+.brand .brand-mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 6px 18px rgba(109, 106, 248, 0.35);
+  color: #fff;
+}
+
+.brand .brand-name {
+  display: inline;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.appbar .search-trigger {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 0 0 auto;
+  border-radius: 12px;
+  min-height: 40px;
+}
+
+.appbar .btn.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  align-self: center;
+}
+
+.appbar .btn.icon.is-on {
+  background: var(--primary-soft);
+}
+
+/* ─── Tabs ─── */
+.tabbar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: var(--tabbar);
+  padding: 0 0 env(safe-area-inset-bottom);
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.tab.is-active {
+  color: var(--text);
+}
+
+.tab-icon {
+  position: relative;
+  display: inline-flex;
+}
+
+.tab svg {
+  transition: transform 0.12s;
+}
+
+.tab:active svg {
+  transform: scale(0.88);
+}
+
+.tab .nav-badge {
+  position: absolute;
+  top: -6px;
+  right: -12px;
+  min-width: 18px;
+  margin: 0;
+  padding: 1px 5px;
+  border: 2px solid var(--bg);
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.appbar-tabs {
+  display: none;
+}
+
+.content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 18px 16px calc(28px + var(--tabbar));
+}
+
+@media (max-width: 520px) {
+  .brand .brand-name {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --tabbar: env(safe-area-inset-bottom, 0px);
+  }
+
+  .tabbar {
+    display: none;
+  }
+
+  .appbar {
+    padding-inline: 24px;
+  }
+
+  .appbar-tabs {
+    display: flex;
+    gap: 4px;
+    margin-left: 20px;
+  }
+
+  .appbar-tabs .tab {
+    flex-direction: row;
+    gap: 8px;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 14.5px;
+  }
+
+  .appbar-tabs .tab svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .appbar-tabs .tab:hover {
+    background: rgba(148, 163, 184, 0.08);
+    color: var(--text);
+  }
+
+  .appbar-tabs .tab.is-active {
+    background: var(--primary-soft);
+  }
+
+  .appbar-tabs .nav-badge {
+    top: -8px;
+    right: -10px;
+  }
+
+  .appbar .search-trigger {
+    flex: 0 1 320px;
+  }
+
+  .content {
+    padding: 28px 24px 64px;
+  }
+}
+
+/* ─── Shared pieces, in Structura's style ─── */
+.card {
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.btn {
+  min-height: 40px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.btn.icon {
+  min-height: 0;
+}
+
+.btn.primary {
+  border: 0;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(109, 106, 248, 0.3);
+}
+
+.btn.primary:hover {
+  filter: brightness(1.08);
+}
+
+.small-btn {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.chip {
+  background: var(--primary-soft);
+  color: var(--accent);
+}
+
+a.chip.link:hover {
+  filter: brightness(1.15);
+}
+
+.chip.ok {
+  background: color-mix(in srgb, var(--optimal) 16%, transparent);
+  color: var(--optimal);
+}
+
+.chip.warn {
+  background: color-mix(in srgb, var(--better) 16%, transparent);
+  color: var(--better);
+}
+
+.segmented {
+  border-radius: 14px;
+}
+
+.segment[aria-checked="true"] {
+  background: var(--primary-soft);
+  color: var(--text);
+  box-shadow: none;
+}
+
+.bar-fill {
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+}
+
+.text-link {
+  color: #a5b4fc;
+  font-weight: 600;
+}
+
+:root[data-theme="light"] .text-link {
+  color: var(--accent);
+}
+
+.eyebrow {
+  color: #a5b4fc;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+:root[data-theme="light"] .eyebrow {
+  color: var(--accent);
+}
+
+.hero h1,
+.page-head h1 {
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* A segmented control of links or buttons (Library, Solve). */
+.seg {
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.seg > a,
+.seg > button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.seg > [aria-pressed="true"],
+.seg > [aria-selected="true"] {
+  background: var(--primary-soft);
+  color: var(--text);
+}
+
+.library-switch {
+  margin-bottom: 18px;
+}
+
+.stat {
+  border-radius: var(--radius);
+}
+
+/* ─── Today: pattern rings ─── */
+.rings {
+  display: flex;
+  gap: 14px;
+  margin: 0 -16px;
+  padding: 4px 16px 6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.rings::-webkit-scrollbar,
+.tiles::-webkit-scrollbar {
+  display: none;
+}
+
+.ring-link {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 76px;
+  scroll-snap-align: start;
+  text-align: center;
+}
+
+.ring {
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  /* The ring fills as the pattern's problems get solved. */
+  background: conic-gradient(var(--primary-2) 0deg, var(--primary) var(--p), rgba(148, 163, 184, 0.22) var(--p));
+  transition: transform 0.15s;
+}
+
+.ring-link.is-full .ring {
+  background: conic-gradient(var(--optimal), #22d3ee, var(--optimal));
+}
+
+.ring-link:active .ring {
+  transform: scale(0.94);
+}
+
+.ring-face {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border: 3px solid var(--bg);
+  border-radius: 50%;
+  background: linear-gradient(145deg, hsl(var(--hue) 70% 58%), hsl(calc(var(--hue) + 40) 70% 42%));
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.ring-label {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.ring-count {
+  margin-top: -4px;
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+/* ─── Today: up-next tiles, like reels ─── */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.tiles {
+  display: grid;
+  grid-auto-columns: 168px;
+  grid-auto-flow: column;
+  gap: 12px;
+  margin: 0 -16px;
+  padding: 0 16px 6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  height: 236px;
+  padding: 14px;
+  overflow: hidden;
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 80% at 100% 0%, hsl(calc(var(--hue) + 40) 80% 60% / 0.55), transparent 60%),
+    linear-gradient(165deg, hsl(var(--hue) 55% 34%), hsl(calc(var(--hue) + 25) 60% 16%));
+  color: #fff;
+  scroll-snap-align: start;
+  transition: transform 0.15s;
+}
+
+.tile:active {
+  transform: scale(0.97);
+}
+
+.tile::after {
+  /* Darkens the bottom so the title stays readable on any hue. */
+  content: "";
+  position: absolute;
+  inset: 40% 0 0;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.45));
+  pointer-events: none;
+}
+
+.tile > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tile-top {
+  color: rgb(255 255 255 / 0.8);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.tile-title {
+  margin-top: auto;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.tile-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: rgb(255 255 255 / 0.8);
+  font-size: 11.5px;
+}
+
+.tile-go,
+.tile-bigo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+}
+
+.tile-go {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.18);
+  color: #fff;
+}
+
+@media (min-width: 1024px) {
+  .rings,
+  .tiles {
+    margin: 0;
+    padding-inline: 0;
+  }
+
+  .tiles {
+    grid-auto-columns: 190px;
+  }
+
+  .tile {
+    height: 250px;
+  }
+}
+
+/* ─── Checklist rows open the solve page ─── */
+.check-title {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.check-title:hover {
+  color: #c7d2fe;
+}
+
+.check-section {
+  scroll-margin-top: calc(var(--appbar) + 12px);
+}
+
+.check-section.is-target {
+  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+}
+
+.check-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.check-actions .btn.icon {
+  min-height: 34px;
+}
+
+.check-flag {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  color: var(--optimal);
+}
+
+.solve-btn {
+  min-width: 86px;
+  justify-content: space-between;
+  padding-right: 8px;
+}
+
+@media (max-width: 760px) {
+  /* One line per problem: tick, title, then Solve. */
+  .check-row {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+
+  .check-title {
+    flex: 1 1 auto;
+    flex-basis: auto;
+    line-height: 1.35;
+  }
+
+  .check-actions {
+    flex: none;
+    margin-left: 0;
+    gap: 2px;
+  }
+
+  .check-actions .btn.icon {
+    padding: 6px;
+  }
+
+  .solve-btn {
+    min-width: 0;
+    min-height: 32px;
+    padding: 4px 6px 4px 10px;
+  }
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The old shell's pieces, now unused. */
+.sidebar,
+.mobile-bar {
+  display: none !important;
+}

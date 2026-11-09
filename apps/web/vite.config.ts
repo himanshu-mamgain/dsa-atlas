@@ -26,8 +26,8 @@ export default defineConfig({
         name: "DSA Atlas",
         short_name: "DSA Atlas",
         description: "Your DSA notebook: brute force → optimal, complexity graphs and language comparisons.",
-        theme_color: "#0b0f17",
-        background_color: "#0b0f17",
+        theme_color: "#0a0e1a",
+        background_color: "#0a0e1a",
         display: "standalone",
         start_url: "/",
         icons: [

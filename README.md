@@ -13,8 +13,10 @@ Installable PWA (Android, iOS, desktop) that works offline. Notes stay on your d
 - **Complexity graph** of every approach, with optional reference curves
 - **Spaced repetition**: problems come back after 1 → 3 → 7 → 14 → 30 → 60 days; streak and topic progress on the home screen
 - **Master Checklist**: your Notion "Must Solve Problems by Pattern" list (3 tiers, 134 problems) with ticks, Notion links, practice steps and pattern signals. Snapshot in `apps/web/src/data/notion/`; regenerate with `npm run checklist -w @dsa-atlas/web`
+- **Solve page** for every checklist problem (`?solve=<id>`): the statement from its Notion page, hints (core insight, dry run, edge cases…) folded away until you need them, your own editor (saved on the device), and the reference solutions from your notes, brute force → optimal. "Mark solved" ticks it off and puts it into revision.
+- **Measured complexity**: runs each JavaScript solution (yours and the notes') in a Web Worker on inputs grown from the problem's example, from n = 2 up to about 250,000, on whichever variant is slowest (all equal, sorted, a palindrome, balanced brackets…), and fits O(1) … O(n!) to the work it counts: loop passes, calls, and built-ins like sort and slice. Steps instead of milliseconds, so the answer is the same every run; time is shown beside it. Code in `packages/complexity` (`inputs`, `instrument`, `fit`) and `apps/web/src/measure`.
 - **Company goals**: target a company by a date (GoKwik, Ram Fincorp, ixigo, Cars24, CarDekho, or any), start from your checklist, see the pace per day and what to solve next
-- **Web-first layout**: sidebar on desktop, bottom tabs on phones
+- **The Structura look**: the same dark theme, five tabs along the bottom on phones and in the top bar on desktop, pattern rings and "Up next" tiles on Today
 - **Backup**: JSON export/import
 - **Push reminders** (phase 2): a daily notification at your chosen time when problems are due. Only titles and due dates go to the server.
 
@@ -38,7 +40,7 @@ npm workspaces, TypeScript, React 19, Vite 8, Motion, Recharts, Dexie (IndexedDB
 | `apps/web` | The PWA: pages, Monaco editor, graphs, service worker |
 | `packages/shared` | Data types shared by the app and (later) the push functions |
 | `packages/review` | Spaced-repetition logic, shared by the app and the reminder function |
-| `packages/complexity` | Big-O parsing and curve sampling for the graph |
+| `packages/complexity` | Big-O parsing, example parsing, input generation, step counting and curve fitting |
 | `netlify/functions` | `push` (`/api/push`: subscribe, unsubscribe, test) and `daily-reminders` (hourly schedule) |
 
 ## Scripts
@@ -55,7 +57,7 @@ npm workspaces, TypeScript, React 19, Vite 8, Motion, Recharts, Dexie (IndexedDB
 
 1. ✅ Problems, approaches, Monaco, offline PWA, complexity graph, compare, spaced repetition
 2. ✅ Netlify push reminders (scheduled function + Web Push + Netlify Blobs)
-3. Run code in the browser (JS worker, Python via Pyodide) and plot measured runtimes
+3. ✅ Run JavaScript in the browser and measure its complexity (Python via Pyodide later)
 4. Chrome extension to capture problems from LeetCode/GFG
 
 ## Notion notes

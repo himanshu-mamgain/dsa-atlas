@@ -10,6 +10,8 @@ import "./theme";
 import "./styles.css";
 import "./layout.css";
 import "./notes/notes.css";
+// Last, so the Structura look wins.
+import "./shell.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

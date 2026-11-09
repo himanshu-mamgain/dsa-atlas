@@ -1,6 +1,9 @@
 import { useSyncExternalStore } from "react";
 
-/** "system" follows the OS; the choice is a per-device convenience kept in localStorage. */
+/**
+ * Dark by default, like Structura, so the two apps feel like one; "system"
+ * follows the OS. The choice is a per-device convenience kept in localStorage.
+ */
 export type ThemeChoice = "system" | "light" | "dark";
 export type Theme = "light" | "dark";
 
@@ -11,9 +14,9 @@ const listeners = new Set<() => void>();
 function readChoice(): ThemeChoice {
   try {
     const v = localStorage.getItem(KEY);
-    return v === "light" || v === "dark" ? v : "system";
+    return v === "light" || v === "system" ? v : "dark";
   } catch {
-    return "system";
+    return "dark";
   }
 }
 
@@ -27,14 +30,14 @@ function apply() {
   if (choice === "system") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", choice);
   root.style.colorScheme = theme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "light" ? "#f6f7fb" : "#0b0f17");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "light" ? "#f6f7fb" : "#0a0e1a");
   listeners.forEach((l) => l());
 }
 
 export function setThemeChoice(c: ThemeChoice) {
   choice = c;
   try {
-    if (c === "system") localStorage.removeItem(KEY);
+    if (c === "dark") localStorage.removeItem(KEY);
     else localStorage.setItem(KEY, c);
   } catch {
     /* private mode: still applies for this visit */

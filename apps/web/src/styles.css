@@ -1,19 +1,23 @@
 :root {
-  --bg: #0b0f17;
-  --panel: #111827;
-  --panel-2: #0f1522;
-  --line: #1f2a40;
-  --text: #e5e9f2;
-  --muted: #8b95ab;
-  --accent: #60a5fa;
+  /* Structura's palette, so the apps in the ecosystem look like one. */
+  --bg: #0a0e1a;
+  --panel: #10172a;
+  --panel-2: #141c33;
+  --line: rgba(148, 163, 184, 0.14);
+  --text: #e6e9f2;
+  --muted: #94a0b8;
+  --accent: #8b8af9;
+  --primary: #6d6af8;
+  --primary-2: #8b5cf6;
+  --primary-soft: rgba(109, 106, 248, 0.16);
   --brute: #f87171;
   --better: #fbbf24;
   --optimal: #34d399;
-  --line-strong: #33415f;
-  --on-accent: #06101f;
+  --line-strong: rgba(148, 163, 184, 0.28);
+  --on-accent: #ffffff;
   --orange: #fb923c;
   --shadow: none;
-  --radius: 14px;
+  --radius: 16px;
   --mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
   color-scheme: dark;
 }
@@ -28,7 +32,10 @@
     --line-strong: #c3cad8;
     --text: #141a26;
     --muted: #5d6779;
-    --accent: #2563eb;
+    --accent: #5b57e8;
+    --primary: #5b57e8;
+    --primary-2: #7c3aed;
+    --primary-soft: rgba(91, 87, 232, 0.12);
     --on-accent: #ffffff;
     --brute: #dc2626;
     --better: #b45309;
@@ -47,7 +54,10 @@
   --line-strong: #c3cad8;
   --text: #141a26;
   --muted: #5d6779;
-  --accent: #2563eb;
+  --accent: #5b57e8;
+  --primary: #5b57e8;
+  --primary-2: #7c3aed;
+  --primary-soft: rgba(91, 87, 232, 0.12);
   --on-accent: #ffffff;
   --brute: #dc2626;
   --better: #b45309;
@@ -66,7 +76,8 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 15px/1.55 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 a {
