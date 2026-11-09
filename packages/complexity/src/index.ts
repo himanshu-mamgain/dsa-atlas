@@ -105,3 +105,10 @@ export function sampleCurves(series: Record<string, string>, maxN = 50, steps = 
   }
   return points;
 }
+
+export * from "./fit";
+export * from "./examples";
+export * from "./inputs";
+export * from "./entry";
+// The instrumenter (and the parser it needs) is a separate import,
+// "@dsa-atlas/complexity/instrument", so only the measuring worker loads it.
