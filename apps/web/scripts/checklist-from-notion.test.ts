@@ -18,7 +18,7 @@ describe("checklistFromBlocks", () => {
     { id: "c", type: "code", has_children: false, code: { rich_text: text("1. Read problem\n2. Identify pattern\n3. Write brute force first") } },
     h(1, "Tier 1 — Must Solve (Highest Frequency)"),
     h(2, "Arrays & Strings"),
-    todo("Two Sum (Hash Map)", true, "/39563e41004f80ca8a3dc01bde0107a5"),
+    todo("Two Sum (Hash Map)", true, "/1a2b3c4d5e6f708192a3b4c5d6e7f809"),
     todo("Longest Common Prefix", false, undefined, [todo("Longest Palindromic Substring", false)]),
     h(2, "Graphs"),
     todo("Number of Islands", false),
@@ -54,7 +54,7 @@ describe("checklistFromBlocks", () => {
     expect(c.tiers[0].sections[0].items[0]).toEqual({
       id: "two-sum-hash-map",
       title: "Two Sum (Hash Map)",
-      notion: "https://app.notion.com/p/39563e41004f80ca8a3dc01bde0107a5",
+      notion: "https://app.notion.com/p/1a2b3c4d5e6f708192a3b4c5d6e7f809",
       done: true,
     });
   });

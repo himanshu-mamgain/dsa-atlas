@@ -29,13 +29,13 @@ describe("noteBlocks", () => {
 
 describe("pageIdOf", () => {
   it("reads ids and URLs", () => {
-    expect(pageIdOf("https://app.notion.com/p/DSA-38663e41004f81daa64dd8b52dcf7a23?pvs=4")).toBe("38663e41-004f-81da-a64d-d8b52dcf7a23");
+    expect(pageIdOf("https://app.notion.com/p/DSA-0f1e2d3c4b5a69788796a5b4c3d2e1f0?pvs=4")).toBe("0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0");
     expect(pageIdOf("nope")).toBeNull();
   });
 });
 
 describe("/api/notion-note", () => {
-  const ROOT = "38663e41004f81daa64dd8b52dcf7a23";
+  const ROOT = "0f1e2d3c4b5a69788796a5b4c3d2e1f0";
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.useRealTimers();
