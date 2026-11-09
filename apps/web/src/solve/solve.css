@@ -1,0 +1,426 @@
+/* The solve page: one pane at a time on phones (Problem, Your code, Solutions,
+   Complexity); from 1100px the problem stays on the left beside the rest. */
+
+.solve {
+  gap: 14px;
+}
+
+.solve-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.solve-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.solve-title h1 {
+  margin: 4px 0 8px;
+  font-size: clamp(1.4rem, 4.2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip-row .badge {
+  padding: 3px 9px;
+}
+
+.solved-btn.is-done {
+  border-color: color-mix(in srgb, var(--optimal) 50%, transparent);
+  background: color-mix(in srgb, var(--optimal) 14%, transparent);
+  color: var(--optimal);
+}
+
+.solve-tabs {
+  position: sticky;
+  top: calc(var(--appbar) + env(safe-area-inset-top) + 6px);
+  z-index: 10;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+}
+
+.solve-tabs > button span {
+  white-space: nowrap;
+}
+
+.solve-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.solve-pane {
+  display: none;
+  min-width: 0;
+}
+
+.solve-pane.is-on {
+  display: block;
+}
+
+@media (max-width: 480px) {
+  /* Four tabs fit across 390px without their icons. */
+  .seg.solve-tabs {
+    width: 100%;
+  }
+
+  .seg.solve-tabs > button {
+    flex: 1 1 0;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 6px;
+    font-size: 0.8rem;
+  }
+
+  .seg.solve-tabs > button svg {
+    display: none;
+  }
+
+  .solved-btn {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1100px) {
+  .solve-work > .solve-tabs {
+    margin-bottom: 14px;
+  }
+
+  .solve-grid {
+    grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+  }
+
+  .solve-pane.solve-problem {
+    position: sticky;
+    top: calc(var(--appbar) + 16px);
+    display: block;
+    max-height: calc(100dvh - var(--appbar) - 32px);
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+  }
+
+}
+
+/* Problem pane */
+.solve-statement {
+  padding: 18px;
+}
+
+.solve-statement > :first-child {
+  margin-top: 0;
+}
+
+.hints {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hints .eyebrow {
+  margin: 6px 0 2px;
+}
+
+.hint {
+  padding: 0;
+}
+
+.hint summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 16px;
+  font-weight: 650;
+  list-style: none;
+  cursor: pointer;
+}
+
+.hint summary::-webkit-details-marker {
+  display: none;
+}
+
+.hint summary svg {
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+
+.hint[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.hint .note-body {
+  padding: 0 16px 14px;
+}
+
+.empty-note {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.empty-note p {
+  margin: 0;
+}
+
+/* Your code */
+.editor-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.select-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.select-label select,
+.example-field input {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+}
+
+.example-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.example-field input {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.measure-card .card-head,
+.ref-card .card-head {
+  margin-bottom: 10px;
+}
+
+.run-result {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.run-result.is-stale {
+  opacity: 0.7;
+}
+
+.run-result p {
+  margin: 0;
+}
+
+.run-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.bigo.big {
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.run-progress,
+.run-failed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.run-progress {
+  color: var(--accent);
+}
+
+.run-failed {
+  color: var(--better);
+}
+
+.run-failed svg {
+  flex: none;
+}
+
+/* Reference solutions */
+.ref-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-left: 3px solid var(--line-strong);
+}
+
+.ref-card.kind-brute {
+  border-left-color: var(--brute);
+}
+
+.ref-card.kind-better {
+  border-left-color: var(--better);
+}
+
+.ref-card.kind-optimal {
+  border-left-color: var(--optimal);
+}
+
+.ref-card,
+.ref-card.kind-brute,
+.ref-card.kind-better,
+.ref-card.kind-optimal {
+  color: var(--text);
+}
+
+.ref-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ref-head h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.ref-complexity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.reveal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #a5b4fc;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reveal[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.code-fallback {
+  overflow-x: auto;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+/* Complexity */
+.small-seg {
+  margin: 4px 0 8px;
+}
+
+.measured-graph {
+  margin: 0 -6px;
+}
+
+.graph-wait {
+  height: 300px;
+}
+
+.measure-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.measure-table th {
+  padding: 0 8px 8px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.measure-table td {
+  padding: 10px 8px;
+  border-top: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.measure-table .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: -1px;
+}
+
+.measured-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 480px) {
+  .measure-table {
+    font-size: 0.82rem;
+  }
+
+  .measure-table th,
+  .measure-table td {
+    padding-inline: 4px;
+  }
+}
+
+.measure-table .bigo,
+.ref-complexity .bigo {
+  white-space: nowrap;
+}

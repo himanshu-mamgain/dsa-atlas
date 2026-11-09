@@ -413,7 +413,7 @@ const host = (url: string) => {
   }
 };
 
-function Blocks({ blocks, index }: { blocks: Block[]; index: NotesIndex }) {
+export function Blocks({ blocks, index }: { blocks: Block[]; index: NotesIndex }) {
   const sub = (c?: Block[]) => (c?.length ? <Blocks blocks={c} index={index} /> : null);
   const text = (r: Rich[]) => <Text r={r} index={index} />;
   return (

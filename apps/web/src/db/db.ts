@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from "dexie";
-import type { ChecklistState, Goal, Problem, ReviewResult } from "@dsa-atlas/shared";
+import type { Attempt, ChecklistState, Goal, Problem, ReviewResult } from "@dsa-atlas/shared";
 import { applyReview, newReview } from "@dsa-atlas/review";
 import { seedProblems } from "./seed";
 import { seedChecklist } from "./checklist";
@@ -8,6 +8,7 @@ export const db = new Dexie("dsa-atlas") as Dexie & {
   problems: EntityTable<Problem, "id">;
   checklist: EntityTable<ChecklistState, "id">;
   goals: EntityTable<Goal, "id">;
+  attempts: EntityTable<Attempt, "id">;
 };
 
 db.version(1).stores({
@@ -19,6 +20,9 @@ db.version(1).stores({
 db.version(2)
   .stores({ checklist: "id, done", goals: "id, targetDate" })
   .upgrade((tx) => tx.table("checklist").bulkPut(seedChecklist()));
+
+// v3: your code and measured complexities from each checklist problem's solve page.
+db.version(3).stores({ attempts: "id, updatedAt" });
 
 db.on("populate", (tx) => {
   tx.table("problems").bulkAdd(seedProblems());
@@ -67,14 +71,19 @@ export function blankProblem(title: string, id: string): Problem {
 
 /** Backup as JSON (no server: this is how notes move between devices for now). */
 export async function exportAll(): Promise<string> {
-  return JSON.stringify({ version: 2, problems: await db.problems.toArray(), checklist: await db.checklist.toArray(), goals: await db.goals.toArray() }, null, 2);
+  return JSON.stringify(
+    { version: 3, problems: await db.problems.toArray(), checklist: await db.checklist.toArray(), goals: await db.goals.toArray(), attempts: await db.attempts.toArray() },
+    null,
+    2,
+  );
 }
 
 export async function importAll(json: string): Promise<number> {
-  const data = JSON.parse(json) as { problems?: Problem[]; checklist?: ChecklistState[]; goals?: Goal[] };
+  const data = JSON.parse(json) as { problems?: Problem[]; checklist?: ChecklistState[]; goals?: Goal[]; attempts?: Attempt[] };
   if (!Array.isArray(data.problems)) throw new Error("Not a DSA Atlas export");
   await db.problems.bulkPut(data.problems);
   if (Array.isArray(data.checklist)) await db.checklist.bulkPut(data.checklist);
   if (Array.isArray(data.goals)) await db.goals.bulkPut(data.goals);
+  if (Array.isArray(data.attempts)) await db.attempts.bulkPut(data.attempts);
   return data.problems.length;
 }

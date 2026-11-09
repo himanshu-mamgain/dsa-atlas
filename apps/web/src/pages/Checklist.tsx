@@ -1,18 +1,31 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
-import { BookOpenText, Check, ExternalLink, FilePlus2, FileText, Lightbulb, ListChecks } from "lucide-react";
+import { BookOpenText, Check, ChevronRight, ExternalLink, FileText, Gauge, Lightbulb, ListChecks, NotebookPen } from "lucide-react";
 import { db } from "../db/db";
-import { CHECKLIST, problemFor, setDone, type ChecklistEntry } from "../db/checklist";
-import { hrefFor, navigate } from "../router";
+import { CHECKLIST, setDone, type ChecklistEntry } from "../db/checklist";
+import { Link } from "../components/Link";
+
+/** An id for a pattern's section, for links from Today's pattern rings. */
+export const patternAnchor = (tier: number, pattern: string) => `t${tier}-${pattern.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
 type Filter = "all" | "todo" | "done";
 
-/** The Master Checklist from Notion: tiers → patterns → problems, ticked on this device. */
-export function Checklist() {
+/**
+ * The Master Checklist from Notion: tiers → patterns → problems, ticked on this
+ * device. Each problem opens its solve page. `pattern` opens the checklist at one.
+ */
+export function Checklist({ pattern }: { pattern?: string }) {
   const states = useLiveQuery(() => db.checklist.toArray(), []);
-  const [tier, setTier] = useState(1);
-  const [filter, setFilter] = useState<Filter>("todo");
+  const opened = pattern ? CHECKLIST.tiers.find((t) => t.sections.some((s) => s.pattern === pattern)) : undefined;
+  const [tier, setTier] = useState(opened?.tier ?? 1);
+  const [filter, setFilter] = useState<Filter>(pattern ? "all" : "todo");
+  const runs = useLiveQuery(async () => new Set((await db.attempts.toArray()).filter((a) => a.runs?.mine).map((a) => a.id)), []);
+
+  const loaded = states !== undefined;
+  useEffect(() => {
+    if (pattern && loaded && opened) document.getElementById(patternAnchor(opened.tier, pattern))?.scrollIntoView({ block: "start" });
+  }, [pattern, opened, loaded]);
 
   const done = useMemo(() => new Map((states ?? []).map((s) => [s.id, s])), [states]);
   if (!states) return null;
@@ -77,7 +90,7 @@ export function Checklist() {
             const solved = s.items.filter((i) => isDone(i.id)).length;
             if (shown.length === 0) return null;
             return (
-              <section key={s.pattern} className="card">
+              <section key={s.pattern} id={patternAnchor(current.tier, s.pattern)} className={`card check-section${s.pattern === pattern ? " is-target" : ""}`}>
                 <div className="card-head">
                   <h2>{s.pattern}</h2>
                   <span className="small muted">
@@ -86,7 +99,7 @@ export function Checklist() {
                 </div>
                 <ul className="check-list">
                   {shown.map((i) => (
-                    <CheckRow key={i.id} item={{ ...i, tier: current.tier, pattern: s.pattern }} done={isDone(i.id)} problemId={done.get(i.id)?.problemId} />
+                    <CheckRow key={i.id} item={{ ...i, tier: current.tier, pattern: s.pattern }} done={isDone(i.id)} problemId={done.get(i.id)?.problemId} measured={runs?.has(i.id) ?? false} />
                   ))}
                 </ul>
               </section>
@@ -124,33 +137,34 @@ export function Checklist() {
   );
 }
 
-function CheckRow({ item, done, problemId }: { item: ChecklistEntry; done: boolean; problemId?: string }) {
+function CheckRow({ item, done, problemId, measured }: { item: ChecklistEntry; done: boolean; problemId?: string; measured: boolean }) {
   return (
     <li className={`check-row${done ? " is-done" : ""}`}>
       <button className="check-box" role="checkbox" aria-checked={done} aria-label={`${item.title}: ${done ? "solved" : "not solved"}`} onClick={() => setDone(item.id, !done)}>
         {done && <Check size={14} strokeWidth={3} />}
       </button>
-      <span className="check-title">{item.title}</span>
+      <Link to={{ name: "solve", id: item.id }} className="check-title">
+        {item.title}
+      </Link>
       <span className="check-actions">
+        {measured && (
+          <span className="check-flag" title="You measured your solution's complexity">
+            <Gauge size={14} aria-label="Measured" />
+          </span>
+        )}
         {item.notion && (
-          <a className="btn icon ghost" href={item.notion} target="_blank" rel="noreferrer" title="Notion notes" aria-label={`${item.title} in Notion`}>
+          <a className="btn icon ghost" href={item.notion} target="_blank" rel="noreferrer" title="Notion page" aria-label={`${item.title} in Notion`}>
             <FileText size={16} />
           </a>
         )}
-        <button
-          className="btn small-btn"
-          onClick={async () => {
-            const id = await problemFor(item);
-            navigate(hrefFor({ name: "problem", id, edit: !problemId }));
-          }}
-          title={problemId ? "Open your DSA Atlas notes" : "Start DSA Atlas notes for this problem"}
-        >
-          {problemId ? "Notes" : (
-            <>
-              <FilePlus2 size={14} aria-hidden /> Add notes
-            </>
-          )}
-        </button>
+        {problemId && (
+          <Link to={{ name: "problem", id: problemId }} className="btn icon ghost" title="Your DSA Atlas notes" aria-label={`Your notes on ${item.title}`}>
+            <NotebookPen size={16} />
+          </Link>
+        )}
+        <Link to={{ name: "solve", id: item.id }} className="btn small-btn solve-btn">
+          {done ? "Review" : "Solve"} <ChevronRight size={14} aria-hidden />
+        </Link>
       </span>
     </li>
   );

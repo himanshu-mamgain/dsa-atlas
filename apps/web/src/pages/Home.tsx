@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
-import { ArrowRight, Brain, CalendarCheck, Flame, ListChecks, Plus, Target } from "lucide-react";
+import { ArrowRight, Brain, CalendarCheck, ChevronRight, Flame, Gauge, ListChecks, Plus, Target } from "lucide-react";
 import { dueLabel, isDue, streak } from "@dsa-atlas/review";
 import { db } from "../db/db";
-import { CHECKLIST } from "../db/checklist";
+import { CHECKLIST, CHECKLIST_ITEMS, checklistItem } from "../db/checklist";
+import { patternAnchor } from "./Checklist";
 import { daysLeft, goalItems, pace } from "../db/goals";
 import { Link } from "../components/Link";
 import { NewProblem } from "../components/NewProblem";
@@ -15,11 +16,27 @@ function greeting() {
   return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
 }
 
-/** The dashboard: what to revise, how your goals are going, and checklist progress. */
+/** A steady colour per pattern, for its ring and tiles. */
+export function patternHue(pattern: string) {
+  let h = 0;
+  for (const c of pattern) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return (h + 230) % 360;
+}
+
+/** "Arrays & Strings" → "AS", "Trees" → "Tr", "DP" → "DP". */
+function initials(pattern: string) {
+  const words = pattern.replace(/[^A-Za-z0-9 /&]/g, "").split(/[\s/&]+/).filter(Boolean);
+  if (words.length > 1) return (words[0][0] + words[1][0]).toUpperCase();
+  const w = words[0] ?? "?";
+  return w.length <= 3 && w === w.toUpperCase() ? w : w[0].toUpperCase() + (w[1] ?? "");
+}
+
+/** Today: pattern rings like stories, problems to solve next as tiles, then revision, goals and progress. */
 export function Home() {
   const problems = useLiveQuery(() => db.problems.toArray(), []);
   const states = useLiveQuery(() => db.checklist.toArray(), []);
   const goals = useLiveQuery(() => db.goals.orderBy("targetDate").toArray(), []);
+  const measured = useLiveQuery(async () => new Map((await db.attempts.toArray()).filter((a) => a.runs?.mine).map((a) => [a.id, a.runs!.mine!.bigO])), []);
   const maps = useMemo(
     () => ({ states: new Map((states ?? []).map((s) => [s.id, s])), problems: new Map((problems ?? []).map((p) => [p.id, p])) }),
     [states, problems],
@@ -38,9 +55,15 @@ export function Home() {
   const todayTarget = goalViews.reduce((n, v) => n + (v.done < v.items.length ? v.perDay : 0), 0);
   const nextUp = goalViews.flatMap((v) => v.items.filter((i) => !i.done).slice(0, 2).map((i) => ({ ...i, company: v.g.company }))).slice(0, 5);
   const doneSet = new Set(states.filter((s) => s.done).map((s) => s.id));
+  // Next to solve: what your goals need first, then the checklist in tier order.
+  const fromGoals = nextUp.map((i) => (i.ref.startsWith("c:") ? checklistItem(i.ref.slice(2)) : undefined)).filter((i) => i && !doneSet.has(i.id));
+  const upNext = [...new Map([...fromGoals, ...CHECKLIST_ITEMS.filter((i) => !doneSet.has(i.id))].map((i) => [i!.id, i!])).values()].slice(0, 10);
+  const rings = CHECKLIST.tiers.flatMap((t) =>
+    t.sections.map((s) => ({ tier: t.tier, pattern: s.pattern, total: s.items.length, done: s.items.filter((i) => doneSet.has(i.id)).length })),
+  );
 
   return (
-    <div className="page">
+    <div className="page today">
       <header className="hero">
         <div>
           <h1>{greeting()} 👋</h1>
@@ -55,11 +78,72 @@ export function Home() {
               <Brain size={18} aria-hidden /> Start revision
             </Link>
           )}
-          <Link to={{ name: "checklist" }} className="btn big-btn">
-            <ListChecks size={18} aria-hidden /> Checklist
-          </Link>
+          {upNext[0] && (
+            <Link to={{ name: "solve", id: upNext[0].id }} className={`btn big-btn${due.length ? "" : " primary"}`}>
+              <ListChecks size={18} aria-hidden /> Solve next
+            </Link>
+          )}
         </div>
       </header>
+
+      <nav className="rings" aria-label="Patterns">
+        {rings.map((r) => {
+          const pct = r.total ? r.done / r.total : 0;
+          return (
+            <Link
+              key={`${r.tier}-${r.pattern}`}
+              to={{ name: "checklist", pattern: r.pattern }}
+              className={`ring-link${pct === 1 ? " is-full" : ""}`}
+              style={{ ["--p" as string]: `${Math.round(pct * 360)}deg`, ["--hue" as string]: patternHue(r.pattern) }}
+              aria-label={`${r.pattern}, tier ${r.tier}: ${r.done} of ${r.total} solved`}
+              id={`ring-${patternAnchor(r.tier, r.pattern)}`}
+            >
+              <span className="ring">
+                <span className="ring-face">{initials(r.pattern)}</span>
+              </span>
+              <span className="ring-label">{r.pattern}</span>
+              <span className="ring-count">
+                T{r.tier} · {r.done}/{r.total}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {upNext.length > 0 && (
+        <section className="tiles-section" aria-labelledby="up-next">
+          <div className="section-head">
+            <h2 id="up-next">Up next</h2>
+            <Link to={{ name: "checklist" }} className="text-link">
+              Checklist <ArrowRight size={14} aria-hidden />
+            </Link>
+          </div>
+          <div className="tiles">
+            {upNext.map((i, k) => (
+              <motion.div key={i.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: k * 0.03 }}>
+                <Link to={{ name: "solve", id: i.id }} className="tile" style={{ ["--hue" as string]: patternHue(i.title) }}>
+                  <span className="tile-top">
+                    Tier {i.tier} · {i.pattern}
+                  </span>
+                  <strong className="tile-title">{i.title}</strong>
+                  <span className="tile-foot">
+                    {measured?.has(i.id) ? (
+                      <span className="tile-bigo">
+                        <Gauge size={14} aria-hidden /> {measured.get(i.id)}
+                      </span>
+                    ) : (
+                      <span>{i.notion ? "Notes in Notion" : "No notes yet"}</span>
+                    )}
+                    <span className="tile-go">
+                      Solve <ChevronRight size={14} aria-hidden />
+                    </span>
+                  </span>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="stat-row">
         <Stat icon={<Flame size={20} />} label="Day streak" value={days} tone="orange" />
@@ -103,10 +187,12 @@ export function Home() {
               </div>
               <ul className="list">
                 {nextUp.map((i) => (
-                  <li key={`${i.company}-${i.ref}`} className="row next-row">
-                    <span className="row-title">{i.title}</span>
-                    <span className="chip quiet">{i.company}</span>
-                    <span className="muted small">{i.group}</span>
+                  <li key={`${i.company}-${i.ref}`}>
+                    <Link to={i.checklistId ? { name: "solve", id: i.checklistId } : { name: "problem", id: i.problemId! }} className="row next-row">
+                      <span className="row-title">{i.title}</span>
+                      <span className="chip quiet">{i.company}</span>
+                      <span className="muted small">{i.group}</span>
+                    </Link>
                   </li>
                 ))}
               </ul>
