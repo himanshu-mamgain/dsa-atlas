@@ -2,7 +2,7 @@
 // run never freezes the page (and can simply be stopped). The code is the
 // learner's own, from his editor or his Notion notes; network and storage are
 // shadowed anyway, and console.log is muted so it doesn't skew the timing.
-import { declares, fingerprint, makeInputs, type ArgSpec, type Builders, type Entry } from "@dsa-atlas/complexity";
+import { argsFor, declares, fingerprint, makeInputs, show, toPlain, type ArgShape, type ArgSpec, type Builders, type Entry } from "@dsa-atlas/complexity";
 import { chargeBuiltins, instrument, sizeOf } from "@dsa-atlas/complexity/instrument";
 
 export interface Job {
@@ -149,5 +149,62 @@ function time(job: Job): Reply {
   }
 }
 
-const scope = self as unknown as { onmessage: ((e: MessageEvent<Job>) => void) | null; postMessage(m: unknown): void };
-scope.onmessage = (e) => scope.postMessage(time(e.data));
+// ─── Running the examples (the Run button) ───────────────────────────────────
+
+export interface CheckJob {
+  id: number;
+  kind: "check";
+  code: string;
+  entry: Entry;
+  cases: { values: unknown[]; shapes: ArgShape[] }[];
+}
+
+export interface CaseOutcome {
+  /** The result as a plain value (lists and trees as arrays). */
+  value?: unknown;
+  error?: string;
+  ms: number;
+  /** What console.log printed, so the learner can debug. */
+  logs: string[];
+}
+
+export type CheckReply = { id: number; ok: true; cases: CaseOutcome[] } | { id: number; ok: false; error: string };
+
+const logs: string[] = [];
+const record = (...a: unknown[]) => void (logs.length < 50 && logs.push(a.map((x) => (typeof x === "string" ? x : show(toPlain(x)))).join(" ")));
+/** console.log/info/warn/error are captured for the results; anything else does nothing. */
+const capture = new Proxy({}, { get: (_, k) => (k === "log" || k === "info" || k === "warn" || k === "error" || k === "debug" ? record : () => undefined) });
+const describe = (e: unknown) => (e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+
+function check(job: CheckJob): CheckReply {
+  let made: { fn: (...a: unknown[]) => unknown; builders: Builders };
+  try {
+    const own = { ListNode: declares(job.code, "ListNode"), TreeNode: declares(job.code, "TreeNode") };
+    const names = [...(own.ListNode ? [] : ["ListNode"]), ...(own.TreeNode ? [] : ["TreeNode"]), "console", ...MUTED.slice(1)];
+    const values = [...(own.ListNode ? [] : [ListNode]), ...(own.TreeNode ? [] : [TreeNode]), capture, ...MUTED.slice(1).map(() => undefined)];
+    const call = job.entry.className ? `(...a) => new ${job.entry.className}().${job.entry.name}(...a)` : job.entry.name;
+    const out = new Function(...names, `${job.code}\n;return { fn: ${call}, ListNode, TreeNode };`)(...values) as {
+      fn: (...a: unknown[]) => unknown;
+      ListNode: Builders["ListNode"];
+      TreeNode: Builders["TreeNode"];
+    };
+    if (typeof out.fn !== "function") throw new Error(`${job.entry.name} isn't a function`);
+    made = { fn: out.fn, builders: { ListNode: out.ListNode, TreeNode: out.TreeNode } };
+  } catch (e) {
+    return { id: job.id, ok: false, error: describe(e) };
+  }
+  const cases = job.cases.map((c): CaseOutcome => {
+    logs.length = 0;
+    const t0 = performance.now();
+    try {
+      const value = toPlain(made.fn(...argsFor(c.values, c.shapes, made.builders)));
+      return { value, ms: performance.now() - t0, logs: [...logs] };
+    } catch (e) {
+      return { error: describe(e), ms: performance.now() - t0, logs: [...logs] };
+    }
+  });
+  return { id: job.id, ok: true, cases };
+}
+
+const scope = self as unknown as { onmessage: ((e: MessageEvent<Job | CheckJob>) => void) | null; postMessage(m: unknown): void };
+scope.onmessage = (e) => scope.postMessage("kind" in e.data && e.data.kind === "check" ? check(e.data) : time(e.data as Job));

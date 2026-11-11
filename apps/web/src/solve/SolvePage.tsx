@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowUpRight, Check, ChevronDown, Code2, FileText, Gauge, Lightbulb, ListChecks, Loader2, Play, Square, TriangleAlert } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Check, CheckCircle2, ChevronDown, Code2, FileText, Gauge, Lightbulb, ListChecks, Loader2, Play, RotateCcw, Square, TriangleAlert, XCircle } from "lucide-react";
 import { APPROACH_LABELS, LANGUAGE_LABELS, LANGUAGES, type Language, type MeasuredRun, type NoteFile, type NotesIndex } from "@dsa-atlas/shared";
 import { db } from "../db/db";
 import { checklistItem, setDone, type ChecklistEntry } from "../db/checklist";
@@ -11,6 +11,7 @@ import { Link } from "../components/Link";
 import { parseProblem, type ParsedProblem, type RefSolution } from "./parse";
 import { agrees, fmtMs, leetcodeSlug, markSolved, referenceEntry, refKey, runKey, runnableLang, saveAttempt, starterCode } from "./solve";
 import { useMeasure, type LiveState } from "./useMeasure";
+import { runTests, type TestRun } from "../measure/tests";
 import type { Series } from "./MeasuredGraph";
 import "./solve.css";
 
@@ -106,6 +107,33 @@ function Solve({ item }: { item: ChecklistEntry }) {
   };
 
   const measurer = useMeasure(item.id);
+
+  // Run: your function on the problem's examples (or the example you typed, if it has none).
+  const [tests, setTests] = useState<TestRun | null>(null);
+  const [testing, setTesting] = useState(false);
+  const runExamples = async () => {
+    if (testing) return;
+    setTesting(true);
+    try {
+      const examples = problem?.examples.length ? problem.examples : example.trim() ? [{ input: example, args: [] }] : [];
+      setTests(await runTests(code, examples, referenceEntry(problem)?.name));
+    } finally {
+      setTesting(false);
+    }
+  };
+  // Ctrl/⌘+Enter runs the examples, as on LeetCode.
+  const runRef = useRef(runExamples);
+  runRef.current = runExamples;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && language === "javascript") {
+        e.preventDefault();
+        void runRef.current();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [language]);
   const prefer = referenceEntry(problem)?.name;
   const runnableRefs = (problem?.solutions ?? []).filter((s) => runnableLang(s.lang));
   const refExample = problem?.examples[0]?.input ?? example;
@@ -166,35 +194,63 @@ function Solve({ item }: { item: ChecklistEntry }) {
         </section>
 
         <section className={`solve-pane solve-work${shown !== "problem" ? " is-on" : ""}`}>
-          {wide && <PaneTabs panes={PANES.slice(1)} shown={shown} onPane={setPane} />}
-          {shown === "code" && (
-            <div className="stack">
-              <div className="editor-bar">
-                <label className="select-label">
-                  <span className="muted small">Language</span>
-                  <select
-                    value={language}
-                    onChange={(e) => void saveAttempt(item.id, { language: e.target.value as Language, code })}
-                  >
-                    {LANGUAGES.map((l) => (
-                      <option key={l} value={l}>
-                        {LANGUAGE_LABELS[l]}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+          {/* Tabs on the left; language, Run and Measure on the right, above the editor. Sticks while you scroll. */}
+          <div className={`work-head${wide ? " is-wide" : ""}`}>
+            {wide && <PaneTabs panes={PANES.slice(1)} shown={shown} onPane={setPane} />}
+            {shown === "code" && (
+              <div className="code-actions" role="toolbar" aria-label="Code">
+                <select
+                  className="lang-select"
+                  aria-label="Language"
+                  value={language}
+                  onChange={(e) => void saveAttempt(item.id, { language: e.target.value as Language, code })}
+                >
+                  {LANGUAGES.map((l) => (
+                    <option key={l} value={l}>
+                      {LANGUAGE_LABELS[l]}
+                    </option>
+                  ))}
+                </select>
                 {draft !== null && draft !== starter && (
                   <button
                     className="btn ghost small-btn"
+                    title="Replace your code with the starter"
                     onClick={() => {
                       setDraft(starter);
                       void saveAttempt(item.id, { code: "" });
                     }}
                   >
-                    Start over
+                    <RotateCcw size={14} aria-hidden /> <span className="hide-narrow">Reset</span>
+                  </button>
+                )}
+                <span className="code-actions-gap" />
+                <button
+                  className="btn primary small-btn"
+                  onClick={runExamples}
+                  disabled={language !== "javascript" || testing}
+                  title={language !== "javascript" ? "Running works for JavaScript" : "Run the examples (Ctrl+Enter)"}
+                >
+                  <Play size={14} aria-hidden /> {testing ? "Running…" : "Run"}
+                </button>
+                {measurer.live.mine?.state === "running" ? (
+                  <button className="btn small-btn" onClick={measurer.cancel}>
+                    <Square size={14} aria-hidden /> Stop
+                  </button>
+                ) : (
+                  <button
+                    className="btn small-btn"
+                    onClick={measureMine}
+                    disabled={language !== "javascript" || measurer.busy}
+                    title="Measure your time complexity on bigger and bigger inputs"
+                  >
+                    <Gauge size={14} aria-hidden /> Measure
                   </button>
                 )}
               </div>
+            )}
+          </div>
+          {shown === "code" && (
+            <div className="stack">
               <Suspense fallback={<div className="editor-loading">Loading editor…</div>}>
                 <CodeEditor
                   language={language}
@@ -206,20 +262,12 @@ function Solve({ item }: { item: ChecklistEntry }) {
                   }}
                 />
               </Suspense>
+              {(tests || testing) && <TestResults run={tests} running={testing} />}
               <section className="card measure-card">
                 <div className="card-head">
                   <h2>
                     <Gauge size={18} aria-hidden /> Your complexity
                   </h2>
-                  {measurer.live.mine?.state === "running" ? (
-                    <button className="btn small-btn" onClick={measurer.cancel}>
-                      <Square size={14} aria-hidden /> Stop
-                    </button>
-                  ) : (
-                    <button className="btn primary small-btn" onClick={measureMine} disabled={language !== "javascript" || measurer.busy}>
-                      <Play size={14} aria-hidden /> Measure
-                    </button>
-                  )}
                 </div>
                 <label className="example-field">
                   <span className="muted small">Example input to grow from</span>
@@ -581,5 +629,84 @@ function MeasuredCell({ r, match }: { r: { run?: MeasuredRun; live?: LiveState; 
       {match === false && <TriangleAlert size={14} className="tone-orange" aria-label="differs from the notes" />}
       {r.stale && <span className="muted small">(old)</span>}
     </span>
+  );
+}
+
+/** What Run found: each example's input, the expected output and yours. */
+function TestResults({ run, running }: { run: TestRun | null; running: boolean }) {
+  const [open, setOpen] = useState(0);
+  if (running && !run)
+    return (
+      <section className="card test-results" aria-live="polite">
+        <p className="muted small">
+          <Loader2 size={14} className="spin" aria-hidden /> Running the examples…
+        </p>
+      </section>
+    );
+  if (!run) return null;
+  if (!run.ok)
+    return (
+      <section className="card test-results is-error" aria-live="polite">
+        <h2>
+          <TriangleAlert size={18} aria-hidden /> Couldn't run
+        </h2>
+        <pre className="test-error">{run.error}</pre>
+      </section>
+    );
+
+  const all = run.total > 0 && run.passed === run.total;
+  const current = run.cases[Math.min(open, run.cases.length - 1)];
+  return (
+    <section className={`card test-results${run.total === 0 ? "" : all ? " is-pass" : " is-fail"}`} aria-live="polite">
+      <div className="card-head">
+        <h2>
+          {run.total === 0 ? <Play size={18} aria-hidden /> : all ? <CheckCircle2 size={18} aria-hidden /> : <XCircle size={18} aria-hidden />}
+          {run.total ? `${run.passed}/${run.total} passed` : "Ran (no expected output to compare)"}
+        </h2>
+        <span className="muted small">
+          {run.entry}() · {fmtMs(run.cases.reduce((t, c) => t + (c.ms ?? 0), 0))}
+        </span>
+      </div>
+      <div className="case-tabs" role="tablist" aria-label="Examples">
+        {run.cases.map((c, i) => (
+          <button key={i} role="tab" aria-selected={i === open} className={`case-tab ${c.verdict ? (c.verdict.pass ? "pass" : "fail") : ""}`} onClick={() => setOpen(i)}>
+            {c.verdict ? c.verdict.pass ? <Check size={13} aria-hidden /> : <XCircle size={13} aria-hidden /> : null} Case {i + 1}
+          </button>
+        ))}
+      </div>
+      {current && (
+        <dl className="case">
+          <dt>Input</dt>
+          <dd>
+            <code>{current.input}</code>
+          </dd>
+          {current.expected !== undefined && (
+            <>
+              <dt>Expected</dt>
+              <dd>
+                <code>{current.expected}</code>
+              </dd>
+            </>
+          )}
+          <dt>{current.error ? "Error" : "Your output"}</dt>
+          <dd>
+            {current.error ? (
+              <pre className="test-error">{current.error}</pre>
+            ) : (
+              <code className={current.verdict ? (current.verdict.pass ? "is-pass" : "is-fail") : ""}>{current.got}</code>
+            )}
+            {current.verdict?.pass && current.verdict.anyOrder && <span className="muted small"> (same answer, different order)</span>}
+          </dd>
+          {current.logs.length > 0 && (
+            <>
+              <dt>console.log</dt>
+              <dd>
+                <pre className="case-logs">{current.logs.join("\n")}</pre>
+              </dd>
+            </>
+          )}
+        </dl>
+      )}
+    </section>
   );
 }
