@@ -625,3 +625,16 @@ a.chip.link:hover {
 .mobile-bar {
   display: none !important;
 }
+
+/* The solve page uses the whole width, like LeetCode: the problem on the left,
+   your code on the right, with only a small margin at the edges. */
+.content.is-full {
+  max-width: none;
+}
+
+@media (min-width: 521px) {
+  .content.is-full {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

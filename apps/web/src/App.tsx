@@ -102,7 +102,7 @@ export function App() {
         <AppSwitcher />
       </header>
 
-      <main className="content">
+      <main className={`content${route.name === "solve" ? " is-full" : ""}`}>
         {(route.name === "problems" || route.name === "notes") && <LibrarySwitch current={route.name} />}
         {route.name === "home" && <Home />}
         {route.name === "revise" && <Revise />}

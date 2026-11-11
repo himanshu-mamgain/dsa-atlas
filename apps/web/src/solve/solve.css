@@ -580,3 +580,46 @@
   flex: none;
   width: auto;
 }
+
+/* The actions keep their natural width: when the bar is too narrow for tabs and
+   actions side by side, the actions wrap onto their own row (right-aligned)
+   instead of pushing Measure past the editor. */
+.work-head .code-actions {
+  flex: 1 0 auto;
+  min-width: max-content;
+}
+
+.code-actions .reset-btn {
+  min-height: 34px;
+  min-width: 34px;
+  padding: 0;
+}
+
+.code-actions .reset-btn:disabled {
+  opacity: 0.35;
+}
+
+/* Scrolled to after Run/Measure: clear the sticky app bar and code bar. */
+.scroll-target {
+  scroll-margin-top: calc(var(--appbar) + 76px);
+  scroll-margin-bottom: 16px;
+}
+
+.scroll-target:empty {
+  display: none;
+}
+
+/* Phones: the language picker gives up a little width so Run and Measure
+   stay inside the page margin. */
+@media (max-width: 480px) {
+  .work-head .code-actions {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .code-actions .lang-select {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 92px;
+  }
+}
