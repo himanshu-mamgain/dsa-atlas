@@ -424,3 +424,159 @@
 .ref-complexity .bigo {
   white-space: nowrap;
 }
+
+/* ── The code pane's bar: tabs on the left; language, Run and Measure on the
+      right, right above the editor. It sticks under the app bar while you scroll,
+      with a solid background so nothing shows through it. ── */
+.work-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.work-head.is-wide {
+  position: sticky;
+  top: calc(var(--appbar) + env(safe-area-inset-top));
+  z-index: 10;
+  padding: 10px 0;
+  background: var(--bg);
+}
+
+.work-head .solve-tabs {
+  position: static;
+  box-shadow: none;
+  margin: 0;
+}
+
+.code-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.code-actions-gap {
+  flex: 1;
+}
+
+.lang-select {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.86rem;
+}
+
+.code-actions .btn {
+  min-height: 34px;
+}
+
+/* ── Run results ── */
+.test-results h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.test-results.is-pass h2 {
+  color: var(--optimal);
+}
+
+.test-results.is-fail h2,
+.test-results.is-error h2 {
+  color: var(--brute);
+}
+
+.case-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.case-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.case-tab[aria-selected="true"] {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.case-tab.pass svg {
+  color: var(--optimal);
+}
+
+.case-tab.fail svg {
+  color: var(--brute);
+}
+
+.case {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.case dt {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.case dd {
+  margin: 0 0 6px;
+}
+
+.case code,
+.test-error,
+.case-logs {
+  display: block;
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.case code.is-pass {
+  border-color: color-mix(in srgb, var(--optimal) 45%, transparent);
+}
+
+.case code.is-fail {
+  border-color: color-mix(in srgb, var(--brute) 45%, transparent);
+}
+
+.test-error {
+  color: var(--brute);
+}
+
+@media (max-width: 480px) {
+  .hide-narrow {
+    display: none;
+  }
+}
+
+.code-actions .lang-select {
+  flex: none;
+  width: auto;
+}
