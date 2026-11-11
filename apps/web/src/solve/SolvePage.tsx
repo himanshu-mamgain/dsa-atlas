@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowUpRight, Check, CheckCircle2, ChevronDown, Code2, FileText, Gauge, Lightbulb, ListChecks, Loader2, Play, RotateCcw, Square, TriangleAlert, XCircle } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Check, CheckCircle2, ChevronDown, Code2, FileText, Gauge, Lightbulb, ListChecks, Loader2, Play, RotateCcw, Square, TriangleAlert, WandSparkles, XCircle } from "lucide-react";
 import { APPROACH_LABELS, LANGUAGE_LABELS, LANGUAGES, type Language, type MeasuredRun, type NoteFile, type NotesIndex } from "@dsa-atlas/shared";
 import { db } from "../db/db";
 import { checklistItem, setDone, type ChecklistEntry } from "../db/checklist";
@@ -12,6 +12,7 @@ import { parseProblem, type ParsedProblem, type RefSolution } from "./parse";
 import { agrees, fmtMs, leetcodeSlug, markSolved, referenceEntry, refKey, runKey, runnableLang, saveAttempt, starterCode } from "./solve";
 import { useMeasure, type LiveState } from "./useMeasure";
 import { runTests, type TestRun } from "../measure/tests";
+import { canFormat, formatCode } from "../editor/format";
 import type { Series } from "./MeasuredGraph";
 import "./solve.css";
 
@@ -108,6 +109,14 @@ function Solve({ item }: { item: ChecklistEntry }) {
 
   const measurer = useMeasure(item.id);
 
+  // After Run or Measure, bring its result into view (below the editor).
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const measureCardRef = useRef<HTMLElement>(null);
+  const reveal = (el: HTMLElement | null) =>
+    requestAnimationFrame(() =>
+      el?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" }),
+    );
+
   // Run: your function on the problem's examples (or the example you typed, if it has none).
   const [tests, setTests] = useState<TestRun | null>(null);
   const [testing, setTesting] = useState(false);
@@ -119,13 +128,36 @@ function Solve({ item }: { item: ChecklistEntry }) {
       setTests(await runTests(code, examples, referenceEntry(problem)?.name));
     } finally {
       setTesting(false);
+      reveal(resultsRef.current);
     }
   };
-  // Ctrl/⌘+Enter runs the examples, as on LeetCode.
+  // Format: Prettier for JavaScript/TypeScript. A syntax error is shown in the results panel.
+  const formatNow = async () => {
+    if (!canFormat(language) || !code.trim()) return;
+    try {
+      const formatted = await formatCode(code, language);
+      if (formatted !== code) {
+        setDraft(formatted);
+        save({ code: formatted, language });
+      }
+    } catch (e) {
+      setTests({ ok: false, error: `Couldn't format: ${(e as Error).message.split("\n")[0]}` });
+      reveal(resultsRef.current);
+    }
+  };
+
+  // Ctrl/⌘+Enter runs the examples, as on LeetCode; Shift+Alt+F formats, as in VS Code.
   const runRef = useRef(runExamples);
   runRef.current = runExamples;
+  const formatRef = useRef(formatNow);
+  formatRef.current = formatNow;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.altKey && e.code === "KeyF") {
+        e.preventDefault();
+        void formatRef.current();
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && language === "javascript") {
         e.preventDefault();
         void runRef.current();
@@ -137,7 +169,12 @@ function Solve({ item }: { item: ChecklistEntry }) {
   const prefer = referenceEntry(problem)?.name;
   const runnableRefs = (problem?.solutions ?? []).filter((s) => runnableLang(s.lang));
   const refExample = problem?.examples[0]?.input ?? example;
-  const measureMine = () => measurer.run([{ key: "mine", code, example, prefer }]);
+  const measureMine = () => {
+    // Show the card as it starts, so the points can be watched coming in.
+    reveal(measureCardRef.current);
+    // …and again when it's done, since the card grows with the result.
+    return measurer.run([{ key: "mine", code, example, prefer }]).finally(() => reveal(measureCardRef.current));
+  };
   const measureRef = (s: RefSolution) => measurer.run([{ key: refKey(s), code: s.code, example: refExample }]);
   const measureAll = () =>
     measurer.run([...(language === "javascript" && code.trim() && code !== starter ? [{ key: "mine", code, example, prefer }] : []), ...runnableRefs.map((s) => ({ key: refKey(s), code: s.code, example: refExample }))]);
@@ -211,18 +248,29 @@ function Solve({ item }: { item: ChecklistEntry }) {
                     </option>
                   ))}
                 </select>
-                {draft !== null && draft !== starter && (
-                  <button
-                    className="btn ghost small-btn"
-                    title="Replace your code with the starter"
-                    onClick={() => {
-                      setDraft(starter);
-                      void saveAttempt(item.id, { code: "" });
-                    }}
-                  >
-                    <RotateCcw size={14} aria-hidden /> <span className="hide-narrow">Reset</span>
-                  </button>
-                )}
+                <button
+                  className="btn icon ghost reset-btn"
+                  title={canFormat(language) ? "Format code (Shift+Alt+F)" : `Formatting works for JavaScript and TypeScript, not ${LANGUAGE_LABELS[language]}`}
+                  aria-label="Format code"
+                  disabled={!canFormat(language) || !code.trim()}
+                  onClick={() => void formatNow()}
+                >
+                  <WandSparkles size={16} aria-hidden />
+                </button>
+                {/* Always shown (disabled until there's something to reset) so the bar never changes width while you type. */}
+                <button
+                  className="btn icon ghost reset-btn"
+                  title="Reset to the starter code"
+                  aria-label="Reset to the starter code"
+                  disabled={code === starter}
+                  onClick={() => {
+                    if (!confirm("Reset to the starter code? Your code on this problem will be replaced.")) return;
+                    setDraft(starter);
+                    void saveAttempt(item.id, { code: "" });
+                  }}
+                >
+                  <RotateCcw size={16} aria-hidden />
+                </button>
                 <span className="code-actions-gap" />
                 <button
                   className="btn primary small-btn"
@@ -262,8 +310,10 @@ function Solve({ item }: { item: ChecklistEntry }) {
                   }}
                 />
               </Suspense>
-              {(tests || testing) && <TestResults run={tests} running={testing} />}
-              <section className="card measure-card">
+              <div ref={resultsRef} className="scroll-target">
+                {(tests || testing) && <TestResults run={tests} running={testing} />}
+              </div>
+              <section ref={measureCardRef} className="card measure-card scroll-target">
                 <div className="card-head">
                   <h2>
                     <Gauge size={18} aria-hidden /> Your complexity
