@@ -1,15 +1,16 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowUpRight, Check, CheckCircle2, ChevronDown, Code2, FileText, Gauge, Lightbulb, ListChecks, Loader2, Play, RotateCcw, Square, TriangleAlert, WandSparkles, XCircle } from "lucide-react";
-import { APPROACH_LABELS, LANGUAGE_LABELS, LANGUAGES, type Language, type MeasuredRun, type NoteFile, type NotesIndex } from "@dsa-atlas/shared";
+import { ArrowLeft, ArrowUpRight, Check, CheckCircle2, ChevronDown, Code2, FileText, Gauge, Lightbulb, ListChecks, Loader2, Play, RotateCcw, Save as SaveIcon, Square, TriangleAlert, WandSparkles, XCircle } from "lucide-react";
+import { APPROACH_LABELS, LANGUAGE_LABELS, LANGUAGES, type Language, type MeasuredRun, type NoteFile, type NotesIndex, type SavedSolution } from "@dsa-atlas/shared";
 import { db } from "../db/db";
 import { checklistItem, setDone, type ChecklistEntry } from "../db/checklist";
 import { loadNote, noteIdIn, notesForProblem, useNotes } from "../notes/notes";
 import { Blocks, UnlockForm } from "../notes/NotesUI";
 import { Link } from "../components/Link";
 import { parseProblem, type ParsedProblem, type RefSolution } from "./parse";
-import { agrees, fmtMs, leetcodeSlug, markSolved, referenceEntry, refKey, runKey, runnableLang, saveAttempt, starterCode } from "./solve";
+import { agrees, fmtMs, leetcodeSlug, markSolved, openSolution, referenceEntry, refKey, runKey, runnableLang, saveAttempt, saveSolution, starterCode } from "./solve";
+import { EditorStatus, SavedList, SavePanel } from "./Saved";
 import { useMeasure, type LiveState } from "./useMeasure";
 import { runTests, type TestRun } from "../measure/tests";
 import { canFormat, formatCode } from "../editor/format";
@@ -101,11 +102,87 @@ function Solve({ item }: { item: ChecklistEntry }) {
   const code = draft ?? (attempt?.code || starter);
   const example = exampleDraft ?? (attempt?.example || problem?.examples[0]?.input || "");
   const language: Language = attempt?.language ?? "javascript";
+  // Autosave. Changes are merged while you type (so an example edit can't cancel a
+  // pending code save) and written after a short pause, or straight away when you
+  // leave the page, switch tabs or close the window.
+  const pending = useRef<Parameters<typeof saveAttempt>[1] | null>(null);
   const saveTimer = useRef<number | undefined>(undefined);
-  const save = (patch: Parameters<typeof saveAttempt>[1]) => {
+  const [saveState, setSaveState] = useState<"saved" | "saving">("saved");
+  // The database write is asynchronous and can't finish once the page is closing,
+  // so every change is also kept in localStorage (synchronous) until it's in the
+  // database; a backup newer than the database copy is restored on the next visit.
+  const backupKey = `dsa-atlas:unsaved:${item.id}`;
+  const flush = useCallback(() => {
     window.clearTimeout(saveTimer.current);
-    saveTimer.current = window.setTimeout(() => void saveAttempt(item.id, patch), 400);
+    const patch = pending.current;
+    if (!patch) return;
+    pending.current = null;
+    void saveAttempt(item.id, patch).then(() => {
+      if (pending.current) return;
+      setSaveState("saved");
+      try {
+        localStorage.removeItem(backupKey);
+      } catch {
+        // Storage blocked: nothing to clear.
+      }
+    });
+  }, [item.id, backupKey]);
+  const save = (patch: Parameters<typeof saveAttempt>[1]) => {
+    pending.current = { ...pending.current, ...patch };
+    try {
+      localStorage.setItem(backupKey, JSON.stringify({ at: Date.now(), patch: pending.current }));
+    } catch {
+      // Storage blocked or full: the database save still runs.
+    }
+    setSaveState("saving");
+    window.clearTimeout(saveTimer.current);
+    saveTimer.current = window.setTimeout(flush, 400);
   };
+  /** Forgets unsaved changes (Reset, opening a saved solution): the pending save and its backup. */
+  const dropPending = () => {
+    pending.current = null;
+    window.clearTimeout(saveTimer.current);
+    try {
+      localStorage.removeItem(backupKey);
+    } catch {
+      // Nothing to clear.
+    }
+  };
+  // Restore what a closed or reloaded page didn't get to write (once the saved attempt has loaded).
+  const restored = useRef(false);
+  useEffect(() => {
+    if (restored.current || attempt === null) return;
+    restored.current = true;
+    let backup: { at: number; patch: Parameters<typeof saveAttempt>[1] } | null = null;
+    try {
+      backup = JSON.parse(localStorage.getItem(backupKey) ?? "null");
+    } catch {
+      backup = null;
+    }
+    if (!backup?.patch) return;
+    if (backup.at > (attempt?.updatedAt ?? 0)) {
+      if (typeof backup.patch.code === "string") setDraft(backup.patch.code);
+      if (typeof backup.patch.example === "string") setExampleDraft(backup.patch.example);
+      save(backup.patch);
+      flush();
+    } else {
+      try {
+        localStorage.removeItem(backupKey);
+      } catch {
+        // Nothing to clear.
+      }
+    }
+  }, [attempt, backupKey, flush]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const onHide = () => document.visibilityState === "hidden" && flush();
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", onHide);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", onHide);
+      flush(); // leaving the problem inside the app
+    };
+  }, [flush]);
 
   const measurer = useMeasure(item.id);
 
@@ -146,16 +223,48 @@ function Solve({ item }: { item: ChecklistEntry }) {
     }
   };
 
-  // Ctrl/⌘+Enter runs the examples, as on LeetCode; Shift+Alt+F formats, as in VS Code.
+  // Your named solutions: Save (Ctrl+S) keeps the editor's code under a name;
+  // opening one puts it in the editor, and Save then updates it.
+  const saved = attempt?.saved ?? [];
+  const current = saved.find((s) => s.id === attempt?.current);
+  const dirty = !!current && (current.code !== code || current.language !== language);
+  const [savePanel, setSavePanel] = useState(false);
+  const saveNamed = async (name: string, asNew: boolean) => {
+    flush();
+    await saveSolution(item.id, { name, language, code }, asNew ? undefined : current?.id);
+  };
+  const openSaved = async (s: SavedSolution) => {
+    if (s.id === current?.id && !dirty) return;
+    const unnamed = code !== starter && code.trim() && !saved.some((x) => x.code === code);
+    if (unnamed && !confirm(`Open "${s.name}"? The code in the editor isn't saved under a name and will be replaced.`)) return;
+    dropPending();
+    await openSolution(item.id, s.id);
+    setDraft(s.code);
+    setPane("code");
+  };
+  const saveShortcut = () => {
+    if (current) void saveNamed(current.name, false);
+    else setSavePanel(true);
+  };
+
+  // Ctrl/⌘+Enter runs the examples, as on LeetCode; Shift+Alt+F formats and
+  // Ctrl/⌘+S saves, as in VS Code.
   const runRef = useRef(runExamples);
   runRef.current = runExamples;
   const formatRef = useRef(formatNow);
   formatRef.current = formatNow;
+  const saveRef = useRef(saveShortcut);
+  saveRef.current = saveShortcut;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.shiftKey && e.altKey && e.code === "KeyF") {
         e.preventDefault();
         void formatRef.current();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "s") {
+        e.preventDefault(); // not the browser's "save page"
+        saveRef.current();
         return;
       }
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && language === "javascript") {
@@ -240,7 +349,10 @@ function Solve({ item }: { item: ChecklistEntry }) {
                   className="lang-select"
                   aria-label="Language"
                   value={language}
-                  onChange={(e) => void saveAttempt(item.id, { language: e.target.value as Language, code })}
+                  onChange={(e) => {
+                    save({ language: e.target.value as Language, code });
+                    flush();
+                  }}
                 >
                   {LANGUAGES.map((l) => (
                     <option key={l} value={l}>
@@ -257,6 +369,16 @@ function Solve({ item }: { item: ChecklistEntry }) {
                 >
                   <WandSparkles size={16} aria-hidden />
                 </button>
+                <button
+                  className={`btn icon ghost reset-btn${savePanel ? " is-on" : ""}`}
+                  title={current ? `Save "${current.name}" (Ctrl+S)` : "Save as a named solution (Ctrl+S)"}
+                  aria-label="Save as a named solution"
+                  aria-expanded={savePanel}
+                  disabled={!code.trim()}
+                  onClick={() => setSavePanel((o) => !o)}
+                >
+                  <SaveIcon size={16} aria-hidden />
+                </button>
                 {/* Always shown (disabled until there's something to reset) so the bar never changes width while you type. */}
                 <button
                   className="btn icon ghost reset-btn"
@@ -264,9 +386,11 @@ function Solve({ item }: { item: ChecklistEntry }) {
                   aria-label="Reset to the starter code"
                   disabled={code === starter}
                   onClick={() => {
-                    if (!confirm("Reset to the starter code? Your code on this problem will be replaced.")) return;
+                    if (!confirm("Reset to the starter code? The code in the editor will be replaced (your named solutions are kept).")) return;
+                    // Drop any pending autosave first, or it would write the old code back.
+                    dropPending();
                     setDraft(starter);
-                    void saveAttempt(item.id, { code: "" });
+                    void saveAttempt(item.id, { code: "", current: undefined });
                   }}
                 >
                   <RotateCcw size={16} aria-hidden />
@@ -299,6 +423,8 @@ function Solve({ item }: { item: ChecklistEntry }) {
           </div>
           {shown === "code" && (
             <div className="stack">
+              {savePanel && <SavePanel saved={saved} current={current} onSave={saveNamed} onClose={() => setSavePanel(false)} />}
+              <EditorStatus saved={saved} current={current} dirty={dirty} saving={saveState === "saving"} onOpen={(s) => void openSaved(s)} />
               <Suspense fallback={<div className="editor-loading">Loading editor…</div>}>
                 <CodeEditor
                   language={language}
@@ -341,7 +467,10 @@ function Solve({ item }: { item: ChecklistEntry }) {
           )}
 
           {shown === "solutions" && (
-            <SolutionsPane problem={problem} index={index} runs={attempt?.runs} live={measurer.live} busy={measurer.busy} onMeasure={measureRef} example={refExample} noNotes={!noteId} />
+            <div className="stack">
+              <SavedList problemId={item.id} saved={saved} currentId={current?.id} onOpen={(s) => void openSaved(s)} />
+              <SolutionsPane problem={problem} index={index} runs={attempt?.runs} live={measurer.live} busy={measurer.busy} onMeasure={measureRef} example={refExample} noNotes={!noteId} />
+            </div>
           )}
 
           {shown === "complexity" && (

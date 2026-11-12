@@ -1,7 +1,7 @@
 // The glue between a checklist item, its Notion page, your code and the
 // measurements: what to measure, how results are stored, and marking solved.
 import { classOf, parseArgs, pickEntry, planInputs, type Entry, type InputPlan } from "@dsa-atlas/complexity";
-import type { Attempt, Language, MeasuredRun } from "@dsa-atlas/shared";
+import type { Attempt, Language, MeasuredRun, SavedSolution } from "@dsa-atlas/shared";
 import { db, saveProblem } from "../db/db";
 import { problemFor, setDone, type ChecklistEntry } from "../db/checklist";
 import type { Measurement } from "../measure/run";
@@ -146,3 +146,57 @@ export const leetcodeSlug = (title: string) =>
 /** 0.0042 → "4.2 µs". */
 export const fmtMs = (ms: number) =>
   ms >= 1 ? `${ms.toFixed(ms >= 100 ? 0 : 1)} ms` : ms >= 0.001 ? `${(ms * 1000).toFixed(ms >= 0.01 ? 0 : 1)} µs` : `${Math.max(1, Math.round(ms * 1e6))} ns`;
+
+// ─── Your named solutions ────────────────────────────────────────────────────
+
+const newId = () => crypto.randomUUID().slice(0, 8);
+
+/** A name not used yet: "Solution 2", or "Two pointers (2)" if that's taken. */
+export function freshName(saved: SavedSolution[] | undefined, base = "Solution"): string {
+  const names = new Set((saved ?? []).map((s) => s.name.toLowerCase()));
+  if (base !== "Solution" && !names.has(base.toLowerCase())) return base;
+  for (let i = base === "Solution" ? (saved?.length ?? 0) + 1 : 2; ; i++) {
+    const name = base === "Solution" ? `Solution ${i}` : `${base} (${i})`;
+    if (!names.has(name.toLowerCase())) return name;
+  }
+}
+
+/**
+ * Saves the editor's code under a name. With `overwrite`, updates that saved
+ * solution; otherwise adds a new one. The editor then counts as opened from it.
+ */
+export async function saveSolution(id: string, s: { name: string; language: Language; code: string }, overwrite?: string): Promise<string> {
+  const prev = await db.attempts.get(id);
+  const now = Date.now();
+  const saved = [...(prev?.saved ?? [])];
+  let sid = overwrite;
+  const i = overwrite ? saved.findIndex((x) => x.id === overwrite) : -1;
+  if (i >= 0) saved[i] = { ...saved[i], name: s.name.trim() || saved[i].name, language: s.language, code: s.code, updatedAt: now };
+  else {
+    sid = newId();
+    saved.push({ id: sid, name: s.name.trim() || freshName(saved), language: s.language, code: s.code, createdAt: now, updatedAt: now });
+  }
+  await db.attempts.put({ id, language: s.language, code: s.code, ...prev, saved, current: sid, updatedAt: now });
+  return sid!;
+}
+
+export async function renameSolution(id: string, sid: string, name: string) {
+  const prev = await db.attempts.get(id);
+  if (!prev?.saved || !name.trim()) return;
+  await db.attempts.put({ ...prev, saved: prev.saved.map((s) => (s.id === sid ? { ...s, name: name.trim(), updatedAt: Date.now() } : s)) });
+}
+
+export async function deleteSolution(id: string, sid: string) {
+  const prev = await db.attempts.get(id);
+  if (!prev?.saved) return;
+  await db.attempts.put({ ...prev, saved: prev.saved.filter((s) => s.id !== sid), current: prev.current === sid ? undefined : prev.current });
+}
+
+/** Puts a saved solution in the editor. */
+export async function openSolution(id: string, sid: string) {
+  const prev = await db.attempts.get(id);
+  const s = prev?.saved?.find((x) => x.id === sid);
+  if (!prev || !s) return;
+  await db.attempts.put({ ...prev, code: s.code, language: s.language, current: sid, updatedAt: Date.now() });
+  return s;
+}
