@@ -623,3 +623,175 @@
     max-width: 92px;
   }
 }
+
+/* ── Your named solutions ── */
+.editor-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-height: 32px;
+}
+
+.editor-status-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.editor-status .autosave {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.saved-menu {
+  position: relative;
+}
+
+.saved-menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 15;
+  width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
+}
+
+.saved-menu-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.saved-menu-item:hover,
+.saved-menu-item.is-on {
+  background: var(--panel-2);
+}
+
+.save-panel {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.save-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 220px;
+}
+
+.save-name input {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+}
+
+.save-panel > p {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.reset-btn.is-on {
+  color: var(--accent);
+}
+
+.saved-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.saved-item {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.saved-item:first-child {
+  border-top: 0;
+  padding-top: 4px;
+}
+
+.saved-item-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.saved-item-head strong {
+  margin-right: 8px;
+}
+
+.saved-item-head p {
+  margin: 2px 0 0;
+}
+
+.saved-code summary {
+  margin-top: 8px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.saved-code .code-view {
+  margin-top: 8px;
+}
+
+/* Phones: tools on the first row; Run and Measure as two wide buttons below,
+   easy to hit with a thumb. */
+@media (max-width: 480px) {
+  .work-head .code-actions {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .code-actions .code-actions-gap {
+    flex-basis: 100%;
+    height: 0;
+  }
+
+  .code-actions .lang-select {
+    max-width: none;
+  }
+
+  .code-actions > .btn.small-btn:not(.reset-btn) {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .work-head .code-actions {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}

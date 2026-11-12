@@ -168,6 +168,20 @@ export interface Attempt {
   updatedAt: number;
   /** Measurements by solution: "mine", or "ref:<title>" for one from your notes. */
   runs?: Record<string, MeasuredRun>;
+  /** Solutions you saved under a name ("Brute force", "Two pointers"). */
+  saved?: SavedSolution[];
+  /** The saved solution the editor was opened from, if any (so Save updates it). */
+  current?: string;
+}
+
+/** One of your solutions to a checklist problem, kept under a name. */
+export interface SavedSolution {
+  id: string;
+  name: string;
+  language: Language;
+  code: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export * from "./notes";
