@@ -1,10 +1,10 @@
 /**
  * The app ecosystem: Himanshu's learning apps, linked to each other.
  * Each app keeps its own data on the device; they connect through links.
- * docs/ecosystem.md describes this contract; Structura carries the same list.
+ * docs/ecosystem.md describes this contract; Structura and Schemata carry the same list.
  */
 
-export type EcoAppId = "structura" | "dsa-atlas";
+export type EcoAppId = "structura" | "dsa-atlas" | "schemata";
 
 export interface EcoApp {
   id: EcoAppId;
@@ -30,6 +30,13 @@ export const ECOSYSTEM: EcoApp[] = [
     tagline: "System design you can see working",
     color: "#a78bfa",
   },
+  {
+    id: "schemata",
+    name: "Schemata",
+    url: "https://schemata-web.netlify.app",
+    tagline: "Databases: SQL editor, interview questions, roadmap",
+    color: "#38bdf8",
+  },
 ];
 
 export const appUrl = (id: EcoAppId) => ECOSYSTEM.find((a) => a.id === id)!.url;
@@ -38,6 +45,8 @@ export const appUrl = (id: EcoAppId) => ECOSYSTEM.find((a) => a.id === id)!.url;
 export const ecoLinks = {
   /** Structura topic page. */
   structuraTopic: (topicId: string) => `${appUrl("structura")}/?topic=${encodeURIComponent(topicId)}`,
+  /** Schemata roadmap stage or database guide. */
+  schemataTopic: (topicId: string) => `${appUrl("schemata")}/?topic=${encodeURIComponent(topicId)}`,
   /** DSA Atlas problems linked to a Structura topic. */
   dsaProblemsForTopic: (topicId: string) => `${appUrl("dsa-atlas")}/?page=problems&structura=${encodeURIComponent(topicId)}`,
   /** One DSA Atlas problem. */
