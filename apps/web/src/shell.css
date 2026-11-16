@@ -638,3 +638,71 @@ a.chip.link:hover {
     padding-right: 20px;
   }
 }
+
+/* ─── Install, in the app bar beside the search (as in Structura) ─── */
+
+.appbar-install {
+  position: relative;
+  flex: none;
+}
+
+.appbar-install-btn {
+  min-height: 40px;
+  padding: 0 12px;
+}
+
+/* Phones: just the icon, so the search keeps its room. */
+.appbar-install-label {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .appbar-install-btn {
+    padding: 0 16px;
+  }
+
+  .appbar-install-label {
+    display: inline;
+  }
+}
+
+.install-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.install-popover {
+  position: absolute;
+  top: 52px;
+  right: -52px;
+  z-index: 61;
+  width: min(300px, calc(100vw - 24px));
+  box-sizing: border-box;
+  padding: 14px 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+}
+
+.install-popover ol {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+.install-popover li {
+  margin: 6px 0;
+}
+
+.install-popover svg {
+  vertical-align: -3px;
+  color: var(--text);
+}
+
+.install-popover-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px !important;
+  height: 32px !important;
+}
