@@ -16,6 +16,7 @@ import { NotesPage, NoteView } from "./notes/NotesUI";
 import { Link } from "./components/Link";
 import { QuickSearch } from "./components/QuickSearch";
 import { AppSwitcher } from "./components/AppSwitcher";
+import { InstallButton } from "./components/InstallButton";
 
 // The five tabs, like Structura's (and Instagram's): along the bottom on phones,
 // in the top bar on desktop.
@@ -96,6 +97,7 @@ export function App() {
         </a>
         <Tabs current={active} due={due} className="appbar-tabs" />
         <QuickSearch />
+        <InstallButton />
         <Link to={{ name: "settings" }} className={`btn icon ghost${active === "settings" ? " is-on" : ""}`} aria-label="Settings">
           <SettingsIcon size={20} />
         </Link>
