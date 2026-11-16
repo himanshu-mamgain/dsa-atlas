@@ -1,10 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
-import { BookOpenText, Check, ChevronRight, ExternalLink, FileText, Gauge, Lightbulb, ListChecks, NotebookPen } from "lucide-react";
+import { BookOpenText, Check, ChevronRight, Database, ExternalLink, FileText, Gauge, Lightbulb, ListChecks, NotebookPen } from "lucide-react";
+import { ecoLinks } from "@dsa-atlas/shared";
 import { db } from "../db/db";
 import { CHECKLIST, setDone, type ChecklistEntry } from "../db/checklist";
 import { Link } from "../components/Link";
+
+/** Patterns that databases are built on, and the Schemata topic that shows it. */
+const SCHEMATA_TOPIC: Record<string, string> = {
+  Trees: "indexing", // B-tree indexes
+  Graphs: "subqueries", // recursive CTEs walk graphs
+  Recursion: "subqueries", // recursive CTEs
+};
 
 /** An id for a pattern's section, for links from Today's pattern rings. */
 export const patternAnchor = (tier: number, pattern: string) => `t${tier}-${pattern.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
@@ -93,8 +101,15 @@ export function Checklist({ pattern }: { pattern?: string }) {
               <section key={s.pattern} id={patternAnchor(current.tier, s.pattern)} className={`card check-section${s.pattern === pattern ? " is-target" : ""}`}>
                 <div className="card-head">
                   <h2>{s.pattern}</h2>
-                  <span className="small muted">
-                    {solved}/{s.items.length}
+                  <span className="check-head-meta">
+                    {SCHEMATA_TOPIC[s.pattern] && (
+                      <a className="db-link small" href={ecoLinks.schemataTopic(SCHEMATA_TOPIC[s.pattern])} target="_blank" rel="noreferrer" title="See how databases use this pattern, in Schemata">
+                        <Database size={13} aria-hidden /> Databases use this
+                      </a>
+                    )}
+                    <span className="small muted">
+                      {solved}/{s.items.length}
+                    </span>
                   </span>
                 </div>
                 <ul className="check-list">
