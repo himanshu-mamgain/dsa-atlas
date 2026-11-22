@@ -14,7 +14,7 @@ import {
   type ReviewResult,
 } from "@dsa-atlas/shared";
 import { dueLabel } from "@dsa-atlas/review";
-import { db, reviewProblem, saveProblem, uid } from "../db/db";
+import { db, markDeleted, reviewProblem, saveProblem, uid } from "../db/db";
 import { navigate } from "../router";
 import { BigO, KindBadge } from "../components/Badges";
 import { StructuraPicker } from "../components/StructuraPicker";
@@ -366,6 +366,7 @@ export function ProblemEditor({ id }: { id: string }) {
           if (!confirm(`Delete "${p.title}"? This can't be undone.`)) return;
           window.clearTimeout(saveTimer.current);
           await db.problems.delete(p.id);
+          await markDeleted(`problem:${p.id}`);
           navigate("/?page=problems");
         }}
       >

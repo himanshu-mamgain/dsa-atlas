@@ -123,6 +123,8 @@ export interface ChecklistState {
   problemId?: string;
   /** Ticked or unticked in the app, so Notion's tick no longer applies. */
   touched?: boolean;
+  /** Epoch ms of the last change, so the Studia account knows which device's copy is newer. */
+  updatedAt?: number;
 }
 
 /** A practice target for a company: problems to finish by a date. */
@@ -135,6 +137,8 @@ export interface Goal {
   items: string[];
   note: string;
   createdAt: number;
+  /** Epoch ms of the last change, so the Studia account knows which device's copy is newer. */
+  updatedAt?: number;
 }
 
 /** One measured run of a solution: steps and time per call at each n. */

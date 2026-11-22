@@ -706,3 +706,91 @@ a.chip.link:hover {
   width: 32px !important;
   height: 32px !important;
 }
+
+/* ─── Studia account (src/account) ─── */
+.account-btn {
+  position: relative;
+  padding: 0;
+  overflow: visible;
+}
+
+.account-avatar {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.account-avatar.big {
+  width: 44px;
+  height: 44px;
+}
+
+.account-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--brute);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+.account-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+  padding: 14px;
+}
+
+.account-menu p {
+  margin: 0;
+}
+
+.account-who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-who div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.account-sync {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.account-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.account-error {
+  color: var(--brute);
+  font-size: 0.88rem;
+}
+
+.account-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.account-actions .btn,
+.account-signin {
+  flex: 1;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .account-menu {
+    width: auto;
+  }
+}

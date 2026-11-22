@@ -3,7 +3,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "motion/react";
 import { Building2, CalendarClock, Check, FilePlus2, FileText, Plus, Target, Trash2, X } from "lucide-react";
 import type { Goal } from "@dsa-atlas/shared";
-import { db } from "../db/db";
+import { db, markDeleted } from "../db/db";
 import { CHECKLIST_ITEMS, problemFor, setDone } from "../db/checklist";
 import { SUGGESTED_COMPANIES, STARTERS, createGoal, daysLeft, goalItems, pace, starterItems, type GoalItemView, type Starter } from "../db/goals";
 import { hrefFor, navigate } from "../router";
@@ -177,7 +177,7 @@ export function GoalPage({ id }: { id: string }) {
   const done = items.filter((i) => i.done).length;
   const days = daysLeft(goal.targetDate);
   const groups = [...new Set(items.map((i) => i.group))];
-  const update = (patch: Partial<Goal>) => db.goals.update(goal.id, patch);
+  const update = (patch: Partial<Goal>) => db.goals.update(goal.id, { ...patch, updatedAt: Date.now() });
 
   return (
     <div className="page">
@@ -269,6 +269,7 @@ export function GoalPage({ id }: { id: string }) {
         onClick={async () => {
           if (!confirm(`Delete the ${goal.company} goal? Your checklist ticks and notes stay.`)) return;
           await db.goals.delete(goal.id);
+          await markDeleted(`goal:${goal.id}`);
           navigate(hrefFor({ name: "goals" }));
         }}
       >
@@ -302,7 +303,7 @@ function AddProblems({ goal, onClose }: { goal: Goal; onClose: () => void }) {
       <ul className="add-list">
         {options.map((o) => (
           <li key={o.ref}>
-            <button className="add-option" onClick={() => db.goals.update(goal.id, { items: [...goal.items, o.ref] })}>
+            <button className="add-option" onClick={() => db.goals.update(goal.id, { items: [...goal.items, o.ref], updatedAt: Date.now() })}>
               <Plus size={14} aria-hidden />
               <span>
                 <strong>{o.title}</strong>
