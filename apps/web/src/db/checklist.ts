@@ -45,7 +45,8 @@ export function seedChecklist(): ChecklistState[] {
 
 export async function setDone(id: string, done: boolean) {
   const prev = await db.checklist.get(id);
-  await db.checklist.put({ ...(prev ?? { id }), id, done, doneAt: done ? Date.now() : null, touched: true });
+  const now = Date.now();
+  await db.checklist.put({ ...(prev ?? { id }), id, done, doneAt: done ? now : null, touched: true, updatedAt: now });
 }
 
 /**
@@ -60,7 +61,7 @@ export async function syncChecklist() {
   for (const item of CHECKLIST_ITEMS) {
     const s = states.get(item.id);
     if (!s) changes.push({ id: item.id, done: item.done, doneAt: item.done ? now : null });
-    else if (!s.touched && s.done !== item.done) changes.push({ ...s, done: item.done, doneAt: item.done ? now : null });
+    else if (!s.touched && s.done !== item.done) changes.push({ ...s, done: item.done, doneAt: item.done ? now : null, updatedAt: now });
   }
   if (changes.length) await db.checklist.bulkPut(changes);
 }
@@ -94,6 +95,6 @@ export async function problemFor(item: ChecklistEntry): Promise<string> {
     updatedAt: now,
   };
   await db.problems.add(p);
-  await db.checklist.put({ ...(state ?? { id: item.id, done: false, doneAt: null }), problemId: id });
+  await db.checklist.put({ ...(state ?? { id: item.id, done: false, doneAt: null }), problemId: id, updatedAt: now });
   return id;
 }

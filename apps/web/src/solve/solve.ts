@@ -2,7 +2,7 @@
 // measurements: what to measure, how results are stored, and marking solved.
 import { classOf, parseArgs, pickEntry, planInputs, type Entry, type InputPlan } from "@dsa-atlas/complexity";
 import type { Attempt, Language, MeasuredRun, SavedSolution } from "@dsa-atlas/shared";
-import { db, saveProblem } from "../db/db";
+import { db, markDeleted, saveProblem } from "../db/db";
 import { problemFor, setDone, type ChecklistEntry } from "../db/checklist";
 import type { Measurement } from "../measure/run";
 import type { ParsedProblem, RefSolution } from "./parse";
@@ -190,6 +190,7 @@ export async function deleteSolution(id: string, sid: string) {
   const prev = await db.attempts.get(id);
   if (!prev?.saved) return;
   await db.attempts.put({ ...prev, saved: prev.saved.filter((s) => s.id !== sid), current: prev.current === sid ? undefined : prev.current });
+  await markDeleted(`saved:${id}/${sid}`);
 }
 
 /** Puts a saved solution in the editor. */

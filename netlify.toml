@@ -3,6 +3,9 @@
 # The build copies your Notion DSA notes into the site and refreshes the Master
 # Checklist when NOTION_TOKEN and NOTION_ROOT_PAGE_ID are set (NOTION_PASSPHRASE
 # encrypts the notes). See the README, "Notion notes".
+# The Studia account (GitHub sign-in and sync through Supabase) needs VITE_SUPABASE_URL and
+# VITE_SUPABASE_PUBLISHABLE_KEY; VITE_STUDIA_URL moves signing in to the Studia site, and
+# VITE_REQUIRE_SIGN_IN=true sends signed-out visitors to its login first. See the README, "Studia account".
 [build]
   command = "npm run build -w @dsa-atlas/web"
   publish = "apps/web/dist"

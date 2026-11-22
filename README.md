@@ -2,7 +2,7 @@
 
 Your DSA notebook: brute force → optimal, time/space complexity graphs, and side-by-side language comparisons for every problem.
 
-Installable PWA (Android, iOS, desktop) that works offline. Notes stay on your device. Companion to [Structura](https://structura-web.netlify.app/): problems can link to Structura topics.
+Installable PWA (Android, iOS, desktop) that works offline. Notes live on your device, and with a Studia account they follow you to every device. Companion to [Structura](https://structura-web.netlify.app/): problems can link to Structura topics.
 
 ## Features (phase 1)
 
@@ -18,6 +18,7 @@ Installable PWA (Android, iOS, desktop) that works offline. Notes stay on your d
 - **Company goals**: target a company by a date (GoKwik, Ram Fincorp, ixigo, Cars24, CarDekho, or any), start from your checklist, see the pace per day and what to solve next
 - **The Structura look**: the same dark theme, five tabs along the bottom on phones and in the top bar on desktop, pattern rings and "Up next" tiles on Today
 - **Backup**: JSON export/import
+- **Studia account** (optional or required, your choice): sign in once with GitHub and your problems, checklist ticks, goals and solutions sync across devices (see below)
 - **Push reminders** (phase 2): a daily notification at your chosen time when problems are due. Only titles and due dates go to the server.
 
 ## Getting started
@@ -59,6 +60,43 @@ npm workspaces, TypeScript, React 19, Vite 8, Motion, Recharts, Dexie (IndexedDB
 2. ✅ Netlify push reminders (scheduled function + Web Push + Netlify Blobs)
 3. ✅ Run JavaScript in the browser and measure its complexity (Python via Pyodide later)
 4. Chrome extension to capture problems from LeetCode/GFG
+
+## Studia account
+
+DSA Atlas shares one account with Structura and Schemata: **Studia**. You sign in with GitHub on
+the Studia site (`studia-hub.netlify.app`), and your data is kept in Supabase (a hosted Postgres
+database with sign-in built in), one row per app in the `app_progress` table. The table, its
+security rules and the setup steps live in the `studia` repo (`docs/accounts.md`).
+
+What syncs: your problems (notes, approaches, code, revision history), Master Checklist ticks,
+company goals and solve-page work (your code, saved solutions, measurements). Settings stay on
+the device: theme, code language, reminder hour, the notes key.
+
+How it syncs (`apps/web/src/account/`):
+
+- **Read, merge, write.** After you sign in, and 4 seconds after each change, the app fetches the
+  account's copy, merges it with this device's (`merge.ts`) and saves the result in both places.
+  Two devices that changed different things both keep their work.
+- **Merging.** A problem's note comes from the copy edited last; its revision history from both
+  (the schedule from the latest review). A tick you set in the app beats Notion's tick, then the
+  later tick wins. Saved solutions and measurements are combined.
+- **Deleting.** A deleted problem, goal or saved solution is remembered (the `deleted` table, kept
+  180 days), so another device's copy doesn't bring it back.
+- **Size.** The account holds up to 500 KB per app. If your data grows past that, sync stops with
+  a message, and everything stays safe on the device.
+
+Netlify environment variables (read at build time):
+
+| Variable | Value |
+| --- | --- |
+| `VITE_SUPABASE_URL` | the Supabase Project URL |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | the publishable key: public by design (row-level security decides what each user may read or write). Leave "Contains secret values" unticked, or Netlify's secrets scan stops the build |
+| `VITE_STUDIA_URL` | `https://studia-hub.netlify.app`: sign in and out there |
+| `VITE_REQUIRE_SIGN_IN` | `true` sends signed-out visitors to Studia's login first, then back to the page they asked for. Offline, the app still opens |
+
+Without the first two the account button is hidden and nothing is loaded. The Supabase code is a
+separate chunk, loaded only when this browser is signed in or signing in. Tests: `npm test`
+(`apps/web/src/account/sync.test.ts`).
 
 ## Notion notes
 

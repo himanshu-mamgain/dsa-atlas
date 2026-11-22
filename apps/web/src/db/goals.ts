@@ -26,7 +26,8 @@ export function starterItems(starter: Starter, states: ChecklistState[]): string
 
 export async function createGoal(company: string, targetDate: string, items: string[], note = ""): Promise<string> {
   const id = `${company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${uid().slice(0, 4)}`;
-  await db.goals.add({ id, company: company.trim(), targetDate, items, note, createdAt: Date.now() });
+  const now = Date.now();
+  await db.goals.add({ id, company: company.trim(), targetDate, items, note, createdAt: now, updatedAt: now });
   return id;
 }
 

@@ -9,7 +9,15 @@ export const db = new Dexie("dsa-atlas") as Dexie & {
   checklist: EntityTable<ChecklistState, "id">;
   goals: EntityTable<Goal, "id">;
   attempts: EntityTable<Attempt, "id">;
+  deleted: EntityTable<Deleted, "key">;
 };
+
+/** Something you deleted, so your Studia account doesn't bring it back from another device. */
+export interface Deleted {
+  /** "problem:<id>", "goal:<id>" or "saved:<attempt id>/<solution id>". */
+  key: string;
+  at: number;
+}
 
 db.version(1).stores({
   // Indexed fields only; the rest of the problem is stored as-is.
@@ -24,12 +32,20 @@ db.version(2)
 // v3: your code and measured complexities from each checklist problem's solve page.
 db.version(3).stores({ attempts: "id, updatedAt" });
 
+// v4: what you deleted, for syncing with your Studia account.
+db.version(4).stores({ deleted: "key" });
+
 db.on("populate", (tx) => {
   tx.table("problems").bulkAdd(seedProblems());
   tx.table("checklist").bulkAdd(seedChecklist());
 });
 
 export const uid = () => crypto.randomUUID().slice(0, 8);
+
+/** Remember a deletion, so syncing with your Studia account deletes it on your other devices too. */
+export async function markDeleted(key: string) {
+  await db.deleted.put({ key, at: Date.now() });
+}
 
 export async function saveProblem(p: Problem) {
   await db.problems.put({ ...p, updatedAt: Date.now() });
@@ -69,7 +85,7 @@ export function blankProblem(title: string, id: string): Problem {
   };
 }
 
-/** Backup as JSON (no server: this is how notes move between devices for now). */
+/** Backup as JSON: your own copy, with or without a Studia account. */
 export async function exportAll(): Promise<string> {
   return JSON.stringify(
     { version: 3, problems: await db.problems.toArray(), checklist: await db.checklist.toArray(), goals: await db.goals.toArray(), attempts: await db.attempts.toArray() },

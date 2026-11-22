@@ -1,6 +1,6 @@
 # App ecosystem
 
-DSA Atlas, [Structura](https://github.com/himanshu-mamgain/structura) and [Schemata](https://github.com/himanshu-mamgain/schemata) are linked apps. Each keeps its own data on the device (no shared accounts); they connect through links and a shared app list.
+DSA Atlas, [Structura](https://github.com/himanshu-mamgain/structura) and [Schemata](https://github.com/himanshu-mamgain/schemata) are linked apps. Each keeps its own data on the device; they connect through links, a shared app list and, optionally, one Studia account (GitHub sign-in through Supabase) that syncs each app's data across devices.
 
 ## Apps
 
@@ -45,4 +45,4 @@ Source of truth in this repo: [`packages/shared/src/ecosystem.ts`](../packages/s
 
 ## Not shared (on purpose, for now)
 
-Notes, progress and push subscriptions stay in each app on each device. Shared accounts and sync would need a backend; see the discussion in the PR that introduced this file.
+Notes, progress and push subscriptions live in each app on each device. With a Studia account, each app also saves its data to its own row of the shared `app_progress` table in Supabase (see the README, "Studia account", and the `studia` repo's `docs/accounts.md`). Push subscriptions and settings stay on the device.
