@@ -37,6 +37,13 @@ export function Reminders() {
       <p className="muted small">
         A daily notification when problems are due. Only problem titles and due dates are sent to the server, never your notes or code.
       </p>
+      <p className="small">
+        Following the daily plan on{" "}
+        <a href="https://studia-hub.netlify.app/today" target="_blank" rel="noreferrer">
+          Studia's Today page
+        </a>
+        ? It already reminds you at 11:00, 17:00 and 21:30, with your due revisions in the list, so you can leave this off.
+      </p>
 
       {support === "dev" && <p className="small">Push works on the deployed site (it needs the service worker), not in dev mode.</p>}
       {support === "unsupported" && <p className="small">This browser doesn't support push notifications.</p>}
