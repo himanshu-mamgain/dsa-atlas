@@ -17,6 +17,13 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# The Master Checklist for the Studia site's daily plan (scripts/public-checklist.mjs).
+[[headers]]
+  for = "/checklist.json"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "no-cache"
+
 [[headers]]
   for = "/sw.js"
   [headers.values]

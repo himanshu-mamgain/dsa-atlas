@@ -19,6 +19,7 @@ Installable PWA (Android, iOS, desktop) that works offline. Notes live on your d
 - **The Structura look**: the same dark theme, five tabs along the bottom on phones and in the top bar on desktop, pattern rings and "Up next" tiles on Today
 - **Backup**: JSON export/import
 - **Studia account** (optional or required, your choice): sign in once with GitHub and your problems, checklist ticks, goals and solutions sync across devices (see below)
+- **Public checklist**: the build publishes `/checklist.json` (ids, titles, tiers and patterns, in order, with a CORS header) for the Studia site's daily plan. No ticks or code, only what the checklist page shows.
 - **Push reminders** (phase 2): a daily notification at your chosen time when problems are due. Only titles and due dates go to the server.
 
 ## Getting started
