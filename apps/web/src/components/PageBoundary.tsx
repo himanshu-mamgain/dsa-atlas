@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Copy, ListChecks, RotateCcw, TriangleAlert } from "lucide-react";
+import { isMissingFileError, reloadForNewVersion } from "../pwa";
 
 /**
  * Catches a crash while drawing one page, so the rest of the app (the app bar, the tabs)
@@ -14,6 +15,8 @@ export class PageBoundary extends Component<{ children: ReactNode }, { error: Er
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
+    // An old version asking for files a deploy removed: load the new version instead.
+    if (isMissingFileError(error) && reloadForNewVersion()) return;
     console.error("DSA Atlas: this page crashed", error, info.componentStack);
   }
 
@@ -30,11 +33,15 @@ export class PageBoundary extends Component<{ children: ReactNode }, { error: Er
         <h1>
           <TriangleAlert size={22} aria-hidden /> This page couldn't open
         </h1>
-        <p className="muted">Something in it failed to load. Your saved work is safe. Try again, or go back to the checklist.</p>
+        <p className="muted">
+          {isMissingFileError(error)
+            ? "A newer version of DSA Atlas is out and part of this page has moved. Reload to get it. Your saved work is safe."
+            : "Something in it failed to load. Your saved work is safe. Try again, or go back to the checklist."}
+        </p>
         <pre className="page-crash-error">{`${error.name}: ${error.message}`}</pre>
         <div className="page-crash-actions">
-          <button type="button" className="btn primary" onClick={() => this.setState({ error: null })}>
-            <RotateCcw size={16} aria-hidden /> Try again
+          <button type="button" className="btn primary" onClick={() => (isMissingFileError(error) ? location.reload() : this.setState({ error: null }))}>
+            <RotateCcw size={16} aria-hidden /> {isMissingFileError(error) ? "Reload" : "Try again"}
           </button>
           <a className="btn" href="?page=checklist">
             <ListChecks size={16} aria-hidden /> Back to the checklist
