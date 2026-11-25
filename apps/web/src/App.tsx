@@ -18,6 +18,7 @@ import { QuickSearch } from "./components/QuickSearch";
 import { AppSwitcher } from "./components/AppSwitcher";
 import { AccountButton } from "./account/AccountButton";
 import { InstallButton } from "./components/InstallButton";
+import { PageBoundary } from "./components/PageBoundary";
 
 // The five tabs, like Structura's (and Instagram's): along the bottom on phones,
 // in the top bar on desktop.
@@ -107,6 +108,7 @@ export function App() {
       </header>
 
       <main className={`content${route.name === "solve" ? " is-full" : ""}`}>
+        <PageBoundary key={hrefFor(route)}>
         {(route.name === "problems" || route.name === "notes") && <LibrarySwitch current={route.name} />}
         {route.name === "home" && <Home />}
         {route.name === "revise" && <Revise />}
@@ -119,6 +121,7 @@ export function App() {
         {route.name === "note" && <NoteView key={route.id} id={route.id} />}
         {route.name === "settings" && <Settings />}
         {route.name === "problem" && (route.edit ? <ProblemEditor key={route.id} id={route.id} /> : <ProblemView key={route.id} id={route.id} />)}
+        </PageBoundary>
       </main>
 
       <Tabs current={active} due={due} className="tabbar" />

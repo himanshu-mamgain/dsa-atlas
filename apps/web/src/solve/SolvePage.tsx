@@ -90,7 +90,17 @@ function Solve({ item }: { item: ChecklistEntry }) {
     };
   }, [noteId]);
 
-  const problem = useMemo(() => (file ? parseProblem(file.blocks) : null), [file]);
+  // A note laid out in a way the parser doesn't expect shouldn't take the page down: show
+  // the whole note as the statement instead.
+  const problem = useMemo(() => {
+    if (!file) return null;
+    try {
+      return parseProblem(file.blocks);
+    } catch (error) {
+      console.error(`DSA Atlas: couldn't read the note for ${item.id}`, error);
+      return { meta: {}, statement: file.blocks, examples: [], solutions: [], sections: [] } satisfies ParsedProblem;
+    }
+  }, [file, item.id]);
   const noteMeta = index && noteId ? index.notes.find((n) => n.id === noteId) : undefined;
   const [pane, setPane] = useState<Pane>(() => (window.matchMedia("(min-width: 1100px)").matches ? "code" : "problem"));
   const shown: Pane = wide && pane === "problem" ? "code" : pane;
@@ -98,7 +108,13 @@ function Solve({ item }: { item: ChecklistEntry }) {
   // Your code: what you typed, else what's saved, else a starter named after the notes' function.
   const [draft, setDraft] = useState<string | null>(null);
   const [exampleDraft, setExampleDraft] = useState<string | null>(null);
-  const starter = useMemo(() => starterCode(problem, item.title), [problem, item.title]);
+  const starter = useMemo(() => {
+    try {
+      return starterCode(problem, item.title);
+    } catch {
+      return starterCode(null, item.title);
+    }
+  }, [problem, item.title]);
   const code = draft ?? (attempt?.code || starter);
   const example = exampleDraft ?? (attempt?.example || problem?.examples[0]?.input || "");
   const language: Language = attempt?.language ?? "javascript";
