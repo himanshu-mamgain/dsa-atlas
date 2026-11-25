@@ -14,6 +14,8 @@ import "./layout.css";
 import "./notes/notes.css";
 // Last, so the Structura look wins.
 import "./shell.css";
+// DSA Atlas interface refresh: intentionally loaded after the shared shell.
+import "./redesign.css";
 
 // Before React renders: the browser can offer installation very early.
 initInstallPrompt();
