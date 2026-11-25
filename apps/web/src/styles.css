@@ -1431,3 +1431,35 @@ kbd {
     width: auto;
   }
 }
+
+/* A page that crashed (components/PageBoundary.tsx): the error and a way out, not a blank screen. */
+.page-crash h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+
+.page-crash h1 svg {
+  color: #fbbf24;
+}
+
+.page-crash-error {
+  max-width: 100%;
+  margin: 16px 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.08);
+  color: #fca5a5;
+  font-size: 13px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.page-crash-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
