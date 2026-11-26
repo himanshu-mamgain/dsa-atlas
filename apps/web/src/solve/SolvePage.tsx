@@ -441,7 +441,7 @@ function Solve({ item }: { item: ChecklistEntry }) {
                   disabled={language !== "javascript" || testing}
                   title={language !== "javascript" ? "Running works for JavaScript" : "Run the examples (Ctrl+Enter)"}
                 >
-                  <Play size={14} aria-hidden /> {testing ? "Running…" : "Run"}
+                  <Play size={14} aria-hidden /> {testing && !submitting ? "Running…" : "Run"}
                 </button>
                 <button
                   className="btn small-btn"
