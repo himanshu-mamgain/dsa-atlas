@@ -213,6 +213,7 @@ function Solve({ item }: { item: ChecklistEntry }) {
   // Run: your function on the problem's examples (or the example you typed, if it has none).
   const [tests, setTests] = useState<TestRun | null>(null);
   const [testing, setTesting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const runExamples = async () => {
     if (testing) return;
     setTesting(true);
@@ -220,6 +221,28 @@ function Solve({ item }: { item: ChecklistEntry }) {
       const examples = problem?.examples.length ? problem.examples : example.trim() ? [{ input: example, args: [] }] : [];
       setTests(await runTests(code, examples, referenceEntry(problem)?.name));
     } finally {
+      setTesting(false);
+      reveal(resultsRef.current);
+    }
+  };
+
+  // Submit checks every available example and marks the problem solved only
+  // when there is at least one expected output and every checked case passes.
+  const submitSolution = async () => {
+    if (testing) return;
+    setTesting(true);
+    setSubmitting(true);
+    try {
+      const examples = problem?.examples.length ? problem.examples : example.trim() ? [{ input: example, args: [] }] : [];
+      const result = await runTests(code, examples, referenceEntry(problem)?.name);
+      setTests(result);
+      if (result.ok && result.total > 0 && result.passed === result.total) {
+        await saveAttempt(item.id, { code, language });
+        const latestAttempt = await db.attempts.get(item.id);
+        await markSolved(item, latestAttempt, problem);
+      }
+    } finally {
+      setSubmitting(false);
       setTesting(false);
       reveal(resultsRef.current);
     }
@@ -418,7 +441,15 @@ function Solve({ item }: { item: ChecklistEntry }) {
                   disabled={language !== "javascript" || testing}
                   title={language !== "javascript" ? "Running works for JavaScript" : "Run the examples (Ctrl+Enter)"}
                 >
-                  <Play size={14} aria-hidden /> {testing ? "Running…" : "Run"}
+                  <Play size={14} aria-hidden /> {testing && !submitting ? "Running…" : "Run"}
+                </button>
+                <button
+                  className="btn small-btn"
+                  onClick={submitSolution}
+                  disabled={language !== "javascript" || testing || !code.trim()}
+                  title="Check all available examples; mark solved when every expected output matches"
+                >
+                  <CheckCircle2 size={14} aria-hidden /> {submitting ? "Submitting…" : "Submit"}
                 </button>
                 {measurer.live.mine?.state === "running" ? (
                   <button className="btn small-btn" onClick={measurer.cancel}>
